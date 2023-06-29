@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from random import randrange
+from random import RNG
 
 @dataclass
 class EllipticCurve:
@@ -63,9 +63,10 @@ class ECDSA:
                                self.curve)
         self.d = 1337
         self.Q = self.G * self.d
+        self.rng = RNG()
 
     def sign(self, m: int) -> (int, int):
-        k = randrange(1, self.curve.n - 1)
+        k = self.rng.randless(self.curve.n - 1)
         r = (self.G * k).x
         if r == 0:
             return self.sign(m)
