@@ -6,10 +6,12 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/YellowPhil/pwnAD/controllers"
 	"github.com/YellowPhil/pwnAD/public"
-	"github.com/YellowPhil/pwnAD/user"
 	"github.com/gin-gonic/gin"
 )
+
+var controller *controllers.Controller
 
 func showMainPage(g *gin.Context) {
 	render(g, "index.html", gin.H{"header": "Home page", "payload": gallery})
@@ -25,7 +27,6 @@ func getPicById(id int) (*public.Kartinka, error) {
 }
 
 func getPicture(c *gin.Context) {
-
 	var (
 		id       int
 		err      error
@@ -54,10 +55,9 @@ func RegisterNewUser(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 
-	if _, err := user.Register(username, password); err != nil {
+	if err := controller.RegisterUser(username, password); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
-	authenticateUser(c)
 
 	render(c, "registration-successful.html", gin.H{"title": "Registered successfully"})
 }
@@ -70,15 +70,18 @@ func LoginUser(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 
-	if !user.IsUserValid(username, password) {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("Invalid username or password"))
+	token, err := controller.CheckLoginUser(username, password)
+	if err != nil {
+		c.HTML(http.StatusBadRequest, "login.html", gin.H{
+			"ErrorTitle":   "Login Failed",
+			"ErrorMessage": "Invalid credentials provided"})
+		return
 	}
-	authenticateUser(c)
 
+	authenticateUser(c, token)
 	render(c, "login-successful.html", gin.H{"title": "Login successful"})
 }
 
 func LogoutUser(c *gin.Context) {
 	deauthenticateUser(c)
-	c.Redirect(http.StatusTemporaryRedirect, "/")
 }

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
+	"github.com/YellowPhil/pwnAD/controllers"
 	"github.com/YellowPhil/pwnAD/public"
 	"github.com/gin-gonic/gin"
 )
@@ -14,32 +14,31 @@ var gallery []public.Kartinka
 
 func initRoutes() {
 	router.GET("/", showMainPage)
-	router.GET("/pictures/view/:id", getPicture)
+	router.GET("/pictures/view/:id", getPicture).Use(AuthMiddleWare())
 
-	userRoutes := router.Group("/users")
+	userRoutes := router.Group("/user")
 	{
 		userRoutes.GET("/register", showRegisterPage)
 		userRoutes.POST("/register", RegisterNewUser)
 		userRoutes.GET("/login", showLoginPage)
 		userRoutes.POST("/login", LoginUser)
-		userRoutes.GET("/logout", LogoutUser)
 	}
+	router.GET("/user/logout", LogoutUser).Use(AuthMiddleWare())
 }
 
 func main() {
 	router = gin.Default()
 	router.LoadHTMLGlob("templates/*")
 
+	db, _ := controllers.Setup()
+	controller = controllers.NewController(db)
+
 	router.Static("/images", "./images")
 
-	gallery = append(gallery, *public.NewKartinka("LV", "nigger"))
-	gallery = append(gallery, *public.NewKartinka("PP", "hate"))
-	gallery = append(gallery, *public.NewKartinka("CC", "i"))
-
-	for _, k := range gallery {
-		fmt.Println(k.ImagePath)
-	}
-
+	//	gallery = append(gallery, *public.NewKartinka("LV", "nigger"))
+	//	gallery = append(gallery, *public.NewKartinka("PP", "hate"))
+	//	gallery = append(gallery, *public.NewKartinka("CC", "i"))
+	//
 	initRoutes()
 	router.Run()
 }

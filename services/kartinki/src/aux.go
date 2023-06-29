@@ -11,13 +11,13 @@ func generateSessionToken() string {
 	return strconv.FormatInt(rand.Int63(), 16)
 }
 
-func authenticateUser(c *gin.Context) {
+func authenticateUser(c *gin.Context, sessionToken string) {
 
-	sessionToken := generateSessionToken()
-	c.SetCookie("token", sessionToken, 3600, "", "", false, true)
+	c.SetCookie("token", sessionToken, 3600, "/", "", false, true)
 	c.Set("logged_in", true)
 }
 
 func deauthenticateUser(c *gin.Context) {
-	c.SetCookie("token", "", -1, "", "", false, true)
+	c.SetCookie("token", "", -1, "/", "", false, true)
+	c.Set("logged_int", false)
 }
