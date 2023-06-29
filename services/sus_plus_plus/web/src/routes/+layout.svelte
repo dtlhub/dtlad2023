@@ -81,14 +81,22 @@
 			align-items: center;
 
 			li a {
-				margin: 0 0.6em;
+				padding: 0 0.6em;
 				color: var(--white);
 				text-decoration: none;
+
+				&:hover {
+					color: var(--cyan);
+				}
 			}
 			.amogus {
 				display: inline;
 				font-size: 2em;
 				color: var(--red);
+
+				&:hover {
+					color: var(--red);
+				}
 			}
 		}
 		position: relative;
