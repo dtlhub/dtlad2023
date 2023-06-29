@@ -37,19 +37,44 @@
 		<FlyingAmogus />
 	{/each}
 
-	<slot />
+	<section>
+		<slot />
+	</section>
 </main>
 
 <style lang="scss">
+	@font-face {
+		font-family: 'AmaticSC';
+		font-style: normal;
+		font-weight: 400;
+		src: url('/fonts/AmaticSC-Bold.ttf');
+	}
+	:global(body) {
+		--white: #d6e0f0;
+		--red: #c51111;
+		--blue: #132ed1;
+		--pink: #ed54ba;
+		--orange: #ef7d0d;
+		--yellow: #f5f557;
+		--purple: #6b2fbb;
+		--cyan: #38fedc;
+		--lime: #50ef39;
+		--brown: #71491e;
+		--surface: rgba(0, 0, 0, 0.75);
+
+		font-family: AmaticSC;
+		font-size: 1.5em;
+	}
+
 	nav {
 		$nav-height: 3em;
 		height: $nav-height;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		background-color: rgba(0, 0, 0, 0.75);
+		background-color: var(--surface);
 		margin-bottom: -1 * $nav-height;
-		
+
 		ul {
 			display: flex;
 			justify-content: space-around;
@@ -57,13 +82,13 @@
 
 			li a {
 				margin: 0 0.6em;
-				color: white;
+				color: var(--white);
 				text-decoration: none;
 			}
 			.amogus {
 				display: inline;
 				font-size: 2em;
-				color: #c51111;
+				color: var(--red);
 			}
 		}
 		position: relative;
@@ -83,5 +108,12 @@
 
 		position: relative;
 		z-index: -2;
+
+		section {
+			background-color: var(--surface);
+			padding: 2em;
+			max-width: 80%;
+			border-radius: 1em;
+		}
 	}
 </style>
