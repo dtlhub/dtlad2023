@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from random import RNG
+from tokens.elliptic.rng import RNG
 
 @dataclass
 class EllipticCurve:

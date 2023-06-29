@@ -1,5 +1,5 @@
-from ecdsa_token import EcdsaToken
-from hmac_token import HmacToken
+from tokens.ecdsa_token import EcdsaToken
+from tokens.hmac_token import HmacToken
 
 class Singleton(type):
     _instances = {}
@@ -22,3 +22,18 @@ class Tokens(metaclass=Singleton):
         return any(
             [self.token_managers[i].validate_token(message) for i in self.token_managers.keys()]
         )
+
+
+def main():
+    t = Tokens()
+    s1, s2 =  t.generate_token(b'hui', 'EC256'), t.generate_token(b'hui', 'HMAC128')
+    assert t.validate_token(s1)
+    assert t.validate_token(s2)
+    try:
+        t.validate_token(s1[:-1])
+        raise "Ti eblan?"
+    except:
+        pass
+
+if __name__ == "__main__":
+    main()
