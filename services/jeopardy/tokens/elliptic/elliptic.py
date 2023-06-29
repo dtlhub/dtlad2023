@@ -56,7 +56,7 @@ class EllipticPoint:
 
 
 class ECDSA:
-    def __init__(self):
+    def __init__(self, key: bytes = b'huijopa'):
         self.curve = EllipticCurve()
         self.G = EllipticPoint(0x6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296,
                                0x4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5,
