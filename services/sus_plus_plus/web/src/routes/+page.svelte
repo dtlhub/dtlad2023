@@ -6,7 +6,7 @@
 	programming language!
 </h1>
 <p>
-	Use navigation bar at the top to visit documentation, or sign up to try to code in this language
+	Use navigation bar at the top to visit documentation, or sign up to try this language out by
 	yourself!
 </p>
 

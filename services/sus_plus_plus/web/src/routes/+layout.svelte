@@ -1,11 +1,15 @@
 <script>
 	import '../reset.css';
 	import FlyingAmogus from '$lib/FlyingAmogus.svelte';
+	import { currentUser, pocketbase } from '$lib/pocketbase';
+	import { applyAction, enhance } from '$app/forms';
 
 	/**
 	 * @type {HTMLAudioElement}
 	 */
 	let audio;
+
+	console.log($currentUser);
 
 	function startAudio() {
 		audio.play();
@@ -24,11 +28,33 @@
 	<ul>
 		<li><a href="/" class="amogus">ඞ++</a></li>
 		<li><a href="/docs">Docs</a></li>
-		<li><a href="/playground">Playground</a></li>
+		{#if $currentUser}
+			<li><a href="/playground">Playground</a></li>
+		{/if}
 	</ul>
 	<ul>
-		<li><a href="/auth/login">Login</a></li>
-		<li><a href="/auth/signup">Sign up</a></li>
+		{#if $currentUser}
+			<li>
+				<span class="text">Logged in as <span class="username">{$currentUser.username}</span></span>
+			</li>
+			<li>
+				<form
+					method="POST"
+					action="/auth/logout"
+					use:enhance={() => {
+						return async ({ result }) => {
+							pocketbase.authStore.clear();
+							await applyAction(result);
+						};
+					}}
+				>
+					<button type="submit">Log out</button>
+				</form>
+			</li>
+		{:else}
+			<li><a href="/auth/login">Log in</a></li>
+			<li><a href="/auth/signup">Sign up</a></li>
+		{/if}
 	</ul>
 </nav>
 
@@ -63,7 +89,7 @@
 		--surface: rgba(0, 0, 0, 0.75);
 
 		font-family: AmaticSC;
-		font-size: 1.5em;
+		font-size: 2em;
 	}
 
 	nav {
@@ -74,24 +100,43 @@
 		align-items: center;
 		background-color: var(--surface);
 		margin-bottom: -1 * $nav-height;
+		z-index: 1;
 
 		ul {
 			display: flex;
 			justify-content: space-around;
 			align-items: center;
 
-			li a {
-				padding: 0 0.6em;
-				color: var(--white);
-				text-decoration: none;
+			li {
+				.text,
+				button,
+				a {
+					background: none;
+					outline: none;
+					border: none;
+					font-family: inherit;
+					font-size: inherit;
+					padding: 0 0.6em;
+					color: var(--white);
+					text-decoration: none;
+				}
 
-				&:hover {
+				.text .username {
 					color: var(--cyan);
+				}
+
+				button,
+				a {
+					&:hover {
+						cursor: pointer;
+						color: var(--cyan);
+					}
 				}
 			}
 			.amogus {
 				display: inline;
 				font-size: 2em;
+				padding: 0 0.3em;
 				color: var(--red);
 
 				&:hover {
@@ -115,13 +160,14 @@
 		align-items: center;
 
 		position: relative;
-		z-index: -2;
+		z-index: 0;
 
 		section {
 			background-color: var(--surface);
 			padding: 2em;
 			max-width: 80%;
 			border-radius: 1em;
+			z-index: unset;
 		}
 	}
 </style>
