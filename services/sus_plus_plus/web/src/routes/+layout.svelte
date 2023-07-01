@@ -4,12 +4,8 @@
 	import { currentUser, pocketbase } from '$lib/pocketbase';
 	import { applyAction, enhance } from '$app/forms';
 
-	/**
-	 * @type {HTMLAudioElement}
-	 */
+	/** @type {HTMLAudioElement} */
 	let audio;
-
-	console.log($currentUser);
 
 	function startAudio() {
 		audio.play();
@@ -92,8 +88,9 @@
 		font-size: 2em;
 	}
 
+	$nav-height: 3em;
 	nav {
-		$nav-height: 3em;
+		width: 100%;
 		height: $nav-height;
 		display: flex;
 		justify-content: space-between;
@@ -148,12 +145,13 @@
 	}
 
 	main {
-		width: 100vw;
-		height: 100vh;
+		width: 100%;
+		min-height: 100vh;
 
 		background-image: url('/images/stars.png');
 		background-repeat: no-repeat;
 		background-size: cover;
+		background-attachment: fixed;
 
 		display: flex;
 		justify-content: center;
@@ -165,6 +163,8 @@
 		section {
 			background-color: var(--surface);
 			padding: 2em;
+			margin-top: $nav-height + 1em;
+			margin-bottom: 1em;
 			max-width: 80%;
 			border-radius: 1em;
 			z-index: unset;
