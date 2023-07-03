@@ -1,5 +1,5 @@
 from tokens.ecdsa_token import EcdsaToken
-from tokens.hmac_token import HmacToken
+from tokens.rc4_token import RC4Token
 
 class Singleton(type):
     _instances = {}
@@ -9,10 +9,10 @@ class Singleton(type):
         return cls._instances[cls]
 
 class Tokens(metaclass=Singleton):
-    def __init__(self) -> None:
+    def __init__(self, iv: bytes = b'dtlad2023') -> None:
         self.token_managers = {
             "EC256": EcdsaToken(b'REDACTED'),
-            "HMAC128": HmacToken(b'REDACTED')
+            "ARC228": RC4Token(b'REDACTED', iv = iv)
         }
 
     def generate_token(self, message: bytes, type_name: str) -> str:
