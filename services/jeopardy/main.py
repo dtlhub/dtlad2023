@@ -3,9 +3,11 @@ from flask import request, redirect, url_for
 from flask import session
 from tokens.tokens import Tokens
 from database.database import Database
+import json
 
 app = Flask(__name__)
 db = Database()
+app.secret_key = 'kek'
 
 @app.route('/', methods=['GET'])
 def init():
@@ -20,7 +22,6 @@ def register():
     signature_type = request.form['type']
     flag = request.form['flag']
     password = request.form['password']
-
     if not db.register(username,password,flag):
         return render_template('register.html', error='User exists')
 
@@ -29,10 +30,14 @@ def register():
     except:
         token_server = Tokens()
 
-    cookie = token_server.generate_token(username.encode(), signature_type)
-    session['cookie'] = cookie
+    to_sign = dict()
+    to_sign['username'] = username
+    cookie = token_server.generate_token(json.dumps(to_sign).encode(), signature_type)
 
-    return redirect(url_for('home'))
+    resp = make_response(redirect(url_for('home')))
+    resp.set_cookie('token', cookie )
+
+    return resp
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -50,26 +55,33 @@ def login():
         token_server = Tokens(bytes.fromhex(request.form['iv']))
     except:
         token_server = Tokens()
+    
+    to_sign = dict()
+    to_sign['username'] = username
+    cookie = token_server.generate_token(json.dumps(to_sign).encode(), signature_type)
+    resp = make_response(redirect(url_for('home')))
+    resp.set_cookie('token', cookie )
 
-    cookie = token_server.generate_token(username.encode(), signature_type)
-    session['cookie'] = cookie
-
-    return redirect(url_for('home'))
+    return resp
 
 
 @app.route("/home", methods=['GET'])
 def home():
-    if 'cookie' not in session.keys():
+    if 'token' not in request.cookies.keys():
         return redirect(url_for('register'))
 
     try:
         token_server = Tokens(bytes.fromhex(request.args['iv']))
     except:
         token_server = Tokens()
-    assert token_server.validate_token(session['cookie'])
-    #add params for flag in home
 
-    return render_template('home.html', [])
+    assert token_server.validate_token(request.cookies['token'])
+    print(request.cookies['token'])
+
+    user = token_server.get_data(request.cookies['token'])['username']
+    print(user)
+
+    return render_template('home.html', flag=db.get_flag(user))
 
 if __name__ == "__main__":
     app.run()

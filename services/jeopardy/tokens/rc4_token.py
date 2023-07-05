@@ -1,5 +1,6 @@
 from tokens.token_abstract import Token
 from Crypto.Cipher import ARC4
+from base64 import b64encode, b64decode
 
 class RC4Token(Token):
     def __init__(self, key: bytes, iv: bytes = b'dtlad2023'):

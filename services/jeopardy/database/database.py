@@ -26,12 +26,13 @@ class Database(metaclass=Singleton):
             cur = self.connection.cursor()
             cur.execute(
             """
-                INSERT INTO users(username, secret_key, hello_message, secret_message) VALUES(?,?,?,?);
-            """, [username, secret_key, hello_message, secret_message])
+                INSERT INTO users(username, password, flag) VALUES(?,?,?);
+            """, [username, password, flag])
             self.connection.commit()
             cur.close()
             return True
         except Exception as e:
+            print(str(e))
             return False
 
     def login(self, username: str, password: str) -> bool:
@@ -39,17 +40,16 @@ class Database(metaclass=Singleton):
         cur.execute("SELECT password FROM users WHERE username=(?)", [username])
         data = cur.fetchone()
         cur.close()
+        print(data, username)
         if data is None:
             return False
-        _, username, dbpassword, flag = data
-        return password == dbpassword
+
+        return password == data[0]
 
     def get_flag(self, username: str) -> str:
         cur = self.connection.cursor()
-        cur.execute("SELECT password FROM users WHERE username=(?)", [username])
+        cur.execute("SELECT flag FROM users WHERE username=(?)", [username])
         data = cur.fetchone()
         cur.close()
-        if data is None:
-            return False
-        _, username, dbpassword, flag = data
-        return flag
+
+        return data[0]
