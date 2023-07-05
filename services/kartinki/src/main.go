@@ -4,17 +4,16 @@ import (
 	"net/http"
 
 	"github.com/YellowPhil/pwnAD/controllers"
-	"github.com/YellowPhil/pwnAD/public"
 	"github.com/gin-gonic/gin"
 )
 
 var router *gin.Engine
 
-var gallery []public.Kartinka
+var userController *controllers.UserController
+var labController *controllers.LabResultsController
 
 func initRoutes() {
 	router.GET("/", showMainPage)
-	router.GET("/pictures/view/:id", getPicture).Use(AuthMiddleWare())
 
 	userRoutes := router.Group("/user")
 	{
@@ -22,8 +21,16 @@ func initRoutes() {
 		userRoutes.POST("/register", RegisterNewUser)
 		userRoutes.GET("/login", showLoginPage)
 		userRoutes.POST("/login", LoginUser)
+		userRoutes.GET("/logout", AuthMiddleWare(), LogoutUser)
 	}
-	router.GET("/user/logout", LogoutUser).Use(AuthMiddleWare())
+	labsRoute := router.Group("/labs").Use(AuthMiddleWare())
+	{
+		labsRoute.GET("/show", showLabsPage)
+		labsRoute.GET("/new", showAddLabPage)
+		labsRoute.POST("/new", AddLab)
+
+	}
+	router.GET("/test", AuthMiddleWare(), testRoute)
 }
 
 func main() {
@@ -31,25 +38,23 @@ func main() {
 	router.LoadHTMLGlob("templates/*")
 
 	db, _ := controllers.Setup()
-	controller = controllers.NewController(db)
+	labController, userController = controllers.SetupControllers(db)
 
-	router.Static("/images", "./images")
-
-	//	gallery = append(gallery, *public.NewKartinka("LV", "nigger"))
-	//	gallery = append(gallery, *public.NewKartinka("PP", "hate"))
-	//	gallery = append(gallery, *public.NewKartinka("CC", "i"))
-	//
 	initRoutes()
 	router.Run()
 }
 
 func render(c *gin.Context, templateName string, data gin.H) {
+	if token, err := c.Cookie("token"); err == nil && token != "" {
+		data["Authorized"] = true
+	} else {
+		data["Authorized"] = false
+	}
 	switch c.Request.Header.Get("Accept") {
 	case "application/json":
 		c.JSON(http.StatusOK, data["payload"])
 	case "application/xml":
 		c.XML(http.StatusOK, data["payload"])
-
 	default:
 		c.HTML(http.StatusOK, templateName, data)
 	}

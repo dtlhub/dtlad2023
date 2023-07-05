@@ -3,16 +3,7 @@
 <!--Embed the header.html template at this location-->
 {{ template "header.html" .}}
 
-  <h1>Hello Gin!</h1>
-
-    {{ range .payload }}
-
-        <div class="col-4 col-sm-4 col-md-3 col-xl-2 center">
-            <img src="{{.ImagePath}}" ></img>
-        </div>
-
-    {{end}}
-
-
+<h1> Добро пожаловать в сервис по загрузке лабораторных работ</h1>
+<h3> Авторизируйтесь, чтобы сдать показания</h2>
 <!--Embed the footer.html template at this location-->
 {{ template "footer.html" .}}

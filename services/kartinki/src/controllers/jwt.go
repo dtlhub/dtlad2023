@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -23,10 +24,11 @@ func GenerateToken(user *User) (string, error) {
 		}}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(key)
+	return token.SignedString([]byte(key))
 }
 
-func ValidateToken(signedToken string) (err error) {
+func ValidateToken(signedToken string, id uint) (err error) {
+	fmt.Println("\n\n\n\nNIGGERNIGGERNIGER\n\n\n")
 	token, err := jwt.ParseWithClaims(
 		signedToken,
 		&JWTClaim{},
@@ -35,16 +37,21 @@ func ValidateToken(signedToken string) (err error) {
 		},
 	)
 	if err != nil {
-		return
+		return err
 	}
+
 	claims, ok := token.Claims.(*JWTClaim)
 	if !ok {
-		err = errors.New("couldn't parse claims")
-		return
+		return errors.New("couldn't parse claims")
 	}
+	fmt.Println(claims.Id)
+
 	if claims.ExpiresAt < time.Now().Local().Unix() {
-		err = errors.New("token expired")
-		return
+		return errors.New("token expired")
 	}
-	return
+
+	if claims.Id != id || claims.Authorized != true {
+		return errors.New("Invalid token")
+	}
+	return nil
 }

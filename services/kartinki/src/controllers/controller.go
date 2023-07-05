@@ -12,10 +12,6 @@ type Controller struct {
 	db *gorm.DB
 }
 
-func NewController(db *gorm.DB) *Controller {
-	return &Controller{db: db}
-}
-
 func (c *Controller) RegisterUser(username, password string) error {
 	NewUser := &User{Username: username, Password: password}
 	NewUser.HashPassword()

@@ -6,9 +6,12 @@
                     Home
         </a>
       <ul class="nav navbar-nav">      
-          <li><a href="/user/logout">Logout</a></li>
-          <li><a href="/user/register">Register</a></li>
-          <li><a href="/user/login">Login</a></li>
+        {{if (eq .Authorized true) }}
+            <li><a href="/user/logout">Logout</a></li>
+        {{ else }}
+            <li><a href="/user/register">Register</a></li>
+            <li><a href="/user/login">Login</a></li>
+        {{ end}}
       </ul>
 
       </div>
