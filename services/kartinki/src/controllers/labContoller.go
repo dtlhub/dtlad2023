@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"math"
 
 	"gorm.io/gorm"
@@ -50,6 +51,17 @@ func (lc *LabResultsController) GetUserLabs(id uint) []LabResult {
 	var result []LabResult
 	var user User
 	lc.db.First(&user, id)
-	lc.db.Model(user).Preload("Labs").Find(&result)
+	lc.db.Model(user).Association("Labs").Find(&result)
+	for _, v := range result {
+		fmt.Println(v)
+	}
 	return result
+}
+
+func (lc *LabResultsController) AddNewLabResult(userID uint, expectedResult, testResult float32, comment string) error {
+	var user User
+	newLab := newLabResult(expectedResult, testResult, comment)
+	lc.db.First(&user, userID)
+	return lc.db.Model(&user).Association("Labs").Append(newLab)
+
 }

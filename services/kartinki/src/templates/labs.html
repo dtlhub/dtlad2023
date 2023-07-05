@@ -4,10 +4,10 @@
 
 {{ range .payload }}
     <div class="col-4 col-sm-4 col-md-3 col-xl-2 center">
-        <p>Результат: {{.TestResult}}}}</p>
+        <p>Результат: {{.TestResult }}</p>
         <p>Ожидаемый Результат: {{.Expected}} </p>
         <p>Погрешность {{.Error}}</p>
-        <p>Причина погрешности: {{.Coment}}</p>
+        <p>Причина погрешности: {{.Comment}}</p>
     </div>
 {{end}}
 

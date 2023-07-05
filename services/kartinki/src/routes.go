@@ -11,14 +11,14 @@ import (
 )
 
 func authenticateUser(c *gin.Context, id uint, sessionToken string) {
-	c.SetCookie("token", sessionToken, 3600, "/", "localhost", false, true)
+	c.SetCookie("token", sessionToken, 3600, "/", "localhost:8080", false, true)
 	c.SetCookie("userID", fmt.Sprintf("%v", id), 3600, "/", "", false, true)
-	c.Set("logged_in", true)
+	c.Set("userID", id)
 }
 
 func deauthenticateUser(c *gin.Context) {
-	c.SetCookie("token", "", -1, "/", "localhost", false, true)
-	c.Set("logged_in", false)
+	c.SetCookie("token", "goldTrigger", 100, "/", "localhost:8080", false, true)
+	c.SetCookie("userID", "-1", 100, "/", "localhost:8080", false, true)
 }
 
 func showMainPage(g *gin.Context) {
@@ -68,7 +68,7 @@ func LoginUser(c *gin.Context) {
 
 func LogoutUser(c *gin.Context) {
 	deauthenticateUser(c)
-	showMainPage(c)
+	c.JSON(200, gin.H{"NIGGEr": "DALE"})
 }
 
 func showLabsPage(c *gin.Context) {
@@ -79,10 +79,36 @@ func showLabsPage(c *gin.Context) {
 }
 
 func showAddLabPage(c *gin.Context) {
-
+	id, _ := c.Cookie("userID")
+	userID, _ := strconv.Atoi(id)
+	user, err := userController.GetUserByID(uint(userID))
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+	}
+	render(c, "input-lab.html", gin.H{"title": "Add lab", "user": user})
 }
 
 func AddLab(c *gin.Context) {
+
+	id, _ := c.Cookie("userID")
+	userID, _ := strconv.Atoi(id)
+	testRes := c.PostForm("testResult")
+	expRes := c.PostForm("expectedResult")
+	comment := c.PostForm("Comment")
+	fmt.Printf("He-he: ")
+	fmt.Println(testRes, expRes, comment)
+	if testRes, err := strconv.ParseFloat(testRes, 32); err == nil {
+		if expRes, err := strconv.ParseFloat(expRes, 32); err == nil {
+			labController.AddNewLabResult(uint(userID), float32(expRes), float32(testRes), comment)
+		}
+	} else {
+		log.Println(err)
+		c.HTML(http.StatusBadRequest, "input-lab.html", gin.H{
+			"ErrorTitle":   "Creating lab report failed",
+			"ErrorMessage": "Invalid data"})
+		return
+
+	}
 }
 
 func testRoute(c *gin.Context) {

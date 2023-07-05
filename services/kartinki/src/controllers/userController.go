@@ -56,3 +56,11 @@ func (c *UserController) CheckLoginUser(username, password string) (uint, string
 	}
 	return user.ID, token, nil
 }
+
+func (c *UserController) GetUserByID(id uint) (*User, error) {
+	user := &User{}
+	if err := c.db.First(user, id).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
+}
