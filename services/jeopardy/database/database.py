@@ -16,8 +16,8 @@ class Database(metaclass=Singleton):
             id INTEGER PRIMARY KEY,
             username TEXT UNIQUE,
             password TEXT,
-            flag TEXT,
-        )""")
+            flag TEXT)
+                    """)
         self.connection.commit()
         cur.close()
 
