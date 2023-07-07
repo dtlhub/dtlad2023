@@ -25,7 +25,7 @@ class Tokens:
                     )
         except Exception as e:
             raise Exception('Cannot unpack token')
-        print(data)
+
         return json.loads(data)
 
 

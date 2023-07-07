@@ -24,7 +24,8 @@ class RC4Token(Token):
         except Exception as e:
             raise Exception('Cannot unpack token')
 
-        if token_type != b'HMAC128':
+        if token_type != b'ARC228':
             return False
+
 
         return self.__precompute(data) == signed

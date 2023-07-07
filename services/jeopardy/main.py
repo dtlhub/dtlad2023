@@ -26,6 +26,7 @@ def register():
         return render_template('register.html', error='User exists')
 
     try:
+        assert len(request.form['iv'] != 0)
         token_server = Tokens(bytes.fromhex(request.form['iv']))
     except:
         token_server = Tokens()
@@ -52,6 +53,7 @@ def login():
         return render_template('login.html', error='Bad login')
 
     try:
+        assert len(request.form['iv'] != 0)
         token_server = Tokens(bytes.fromhex(request.form['iv']))
     except:
         token_server = Tokens()
@@ -71,15 +73,14 @@ def home():
         return redirect(url_for('register'))
 
     try:
+        assert len(request.form['iv'] != 0)
         token_server = Tokens(bytes.fromhex(request.args['iv']))
     except:
         token_server = Tokens()
 
     assert token_server.validate_token(request.cookies['token'])
-    print(request.cookies['token'])
 
     user = token_server.get_data(request.cookies['token'])['username']
-    print(user)
 
     return render_template('home.html', flag=db.get_flag(user))
 
