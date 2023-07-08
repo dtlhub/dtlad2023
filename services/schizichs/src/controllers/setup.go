@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -17,12 +19,11 @@ func SetupControllers(db *gorm.DB) (*LabResultsController, *UserController) {
 
 func Setup() (*gorm.DB, error) {
 
-	//login := os.Getenv("MYSQL_USER")
-	//password := os.Getenv("MYSQL_PASSWORD")
-	//dbname := os.Getenv("MYSQL_DATABSE")
+	login := os.Getenv("MYSQL_USER")
+	password := os.Getenv("MYSQL_PASSWORD")
+	dbname := os.Getenv("MYSQL_DATABASE")
 
-	//dsn := fmt.Sprintf("%s:%s@tcp(mysql:3306)/%s?charset=utf8", login, password, dbname)
-	dsn := "root:test123@tcp(localhost:3306)/testdb?charset=utf8&parseTime=true"
+	dsn := fmt.Sprintf("%s:%s@tcp(database:3306)/%s?charset=utf8&parseTime=true", login, password, dbname)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err.Error())

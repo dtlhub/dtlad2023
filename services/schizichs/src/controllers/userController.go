@@ -44,7 +44,11 @@ func (c *UserController) RegisterUser(username, password string) error {
 
 func (c *UserController) CheckLoginUser(username, password string) (uint, string, error) {
 	user := &User{}
-	if err := c.db.Model(user).Where("username = ?", username).Take(user).Error; err != nil {
+	//if err := c.db.Model(user).Where("username = ?", username).Take(user).Error; err != nil {
+	//	return 0, "", err
+	//}
+
+	if err := c.db.Where(&User{Username: username}).First(user).Error; err != nil {
 		return 0, "", err
 	}
 	if err := verifyPassword(user.Password, password); err != nil && err == bcrypt.ErrMismatchedHashAndPassword {

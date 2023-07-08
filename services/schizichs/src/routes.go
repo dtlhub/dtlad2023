@@ -95,11 +95,14 @@ func AddLab(c *gin.Context) {
 	testRes := c.PostForm("testResult")
 	expRes := c.PostForm("expectedResult")
 	comment := c.PostForm("Comment")
-	fmt.Printf("He-he: ")
-	fmt.Println(testRes, expRes, comment)
-	if testRes, err := strconv.ParseFloat(testRes, 32); err == nil {
-		if expRes, err := strconv.ParseFloat(expRes, 32); err == nil {
-			labController.AddNewLabResult(uint(userID), float32(expRes), float32(testRes), comment)
+	if testRes, err := strconv.ParseFloat(testRes, 64); err == nil {
+		if expRes, err := strconv.ParseFloat(expRes, 64); err == nil {
+			if err := labController.AddNewLabResult(uint(userID), expRes, testRes, comment); err != nil {
+				c.HTML(http.StatusBadRequest, "input-lab.html", gin.H{
+					"ErrorTitle":   "Не списывать!",
+					"ErrorMessage": "Теоретические данные слишком похожи на практику",
+				})
+			}
 		}
 	} else {
 		log.Println(err)
@@ -107,10 +110,6 @@ func AddLab(c *gin.Context) {
 			"ErrorTitle":   "Creating lab report failed",
 			"ErrorMessage": "Invalid data"})
 		return
-
 	}
-}
-
-func testRoute(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"Well!": "Done!"})
+	c.Redirect(http.StatusMovedPermanently, "/labs/show")
 }

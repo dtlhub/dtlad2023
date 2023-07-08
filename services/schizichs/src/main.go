@@ -30,7 +30,6 @@ func initRoutes() {
 		labsRoute.POST("/new", AddLab)
 
 	}
-	router.GET("/test", AuthMiddleWare(), testRoute)
 }
 
 func main() {

@@ -13,7 +13,7 @@
         <form action="/labs/new" method="POST">
           <div class="mb-3">
             <label for="expectedResult" class="form-label">Теоретическое значение</label>
-            <input type="number" step="any" class="form-control" name="expectedResult" id="expectedResult" aria-describedby="hint">
+            <input type="number" step="any" required="required" class="form-control" name="expectedResult" id="expectedResult" aria-describedby="hint">
             <div id="hint" class="form-text">Мы не осуждаем вас за сильное расхождение</div>
           </div>
           <div class="mb-3">
@@ -22,7 +22,7 @@
           </div>
           <div class="mb-3">
             <label for="Comment" class="form-label">Объяснение погрешности</label>
-            <input type="text" class="form-control" name="Comment" id="Comment">
+            <input type="text" required="required" class="form-control" name="Comment" id="Comment">
           </div>
 
 
