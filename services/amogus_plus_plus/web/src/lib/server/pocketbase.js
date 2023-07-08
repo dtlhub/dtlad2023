@@ -8,15 +8,15 @@ export const pocketbase = new PocketBase(LOCAL_POCKETBASE_ADDRESS);
  * @param {any} err
  */
 export function tryHandlePocketbaseError(err) {
-	let errorToThrow;
-	try {
-		/** @type {import('pocketbase').ClientResponseError} */
-		const clientError = err;
-		errorToThrow = error(clientError.status, clientError.message);
-	} catch (notClientError) {
-		console.error(notClientError);
-		errorToThrow = notClientError;
-	}
+  let errorToThrow;
+  try {
+    /** @type {import('pocketbase').ClientResponseError} */
+    const clientError = err;
+    errorToThrow = error(clientError.status, clientError.message);
+  } catch (notClientError) {
+    console.error(notClientError);
+    errorToThrow = notClientError;
+  }
 
-	throw errorToThrow;
+  throw errorToThrow;
 }
