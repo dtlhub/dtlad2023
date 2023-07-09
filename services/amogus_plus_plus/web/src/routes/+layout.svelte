@@ -40,6 +40,7 @@
           use:enhance={() => {
             return async ({ result }) => {
               pocketbase.authStore.clear();
+
               await applyAction(result);
             };
           }}
