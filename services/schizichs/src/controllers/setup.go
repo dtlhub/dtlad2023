@@ -24,6 +24,7 @@ func Setup() (*gorm.DB, error) {
 	dbname := os.Getenv("MYSQL_DATABASE")
 
 	dsn := fmt.Sprintf("%s:%s@tcp(database:3306)/%s?charset=utf8&parseTime=true", login, password, dbname)
+
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err.Error())

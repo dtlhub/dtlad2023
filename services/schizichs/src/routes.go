@@ -10,6 +10,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type userData struct {
+	Username string `form:"username" json:"username" binding:"required"`
+	Password string `form:"username" json:"password" binding:"required"`
+}
+
+type labData struct {
+	TestResult     float64 `form:"testResult" json:"testResult" binding:"required,numeric"`
+	ExpectedResult float64 `form:"expectedResult" json:"expectedResult" binding:"required,numeric"`
+	Comment        string  `form:"comment" json:"comment"`
+}
+
 func authenticateUser(c *gin.Context, id uint, sessionToken string) {
 	c.SetCookie("token", sessionToken, 3600, "/", "localhost:8080", false, true)
 	c.SetCookie("userID", fmt.Sprintf("%v", id), 3600, "/", "", false, true)
@@ -32,10 +43,18 @@ func showRegisterPage(c *gin.Context) {
 }
 
 func RegisterNewUser(c *gin.Context) {
-	username := c.PostForm("username")
-	password := c.PostForm("password")
-
-	if err := userController.RegisterUser(username, password); err != nil {
+	newUserData := userData{}
+	if err := c.ShouldBind(&newUserData); err != nil {
+		c.HTML(http.StatusBadRequest, "register.html", gin.H{
+			"ErrorTitle":   "Registration failed",
+			"ErrorMessage": "Not a valid user data",
+		})
+		return
+	}
+	//	username := c.PostForm("username")
+	//	password := c.PostForm("password")
+	//
+	if err := userController.RegisterUser(newUserData.Username, newUserData.Password); err != nil {
 		c.HTML(http.StatusBadRequest, "register.html", gin.H{
 			"ErrorTitle":   "Registration failed",
 			"ErrorMessage": "Username already taken",
@@ -50,10 +69,13 @@ func showLoginPage(c *gin.Context) {
 }
 
 func LoginUser(c *gin.Context) {
-	username := c.PostForm("username")
-	password := c.PostForm("password")
+	newUserData := userData{}
 
-	id, token, err := userController.CheckLoginUser(username, password)
+	if err := c.ShouldBind(&newUserData); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Error": "Not a valid user data"})
+		return
+	}
+	id, token, err := userController.CheckLoginUser(newUserData.Username, newUserData.Password)
 	if err != nil {
 		log.Println(err)
 		c.HTML(http.StatusBadRequest, "login.html", gin.H{
@@ -89,26 +111,19 @@ func showAddLabPage(c *gin.Context) {
 }
 
 func AddLab(c *gin.Context) {
-
+	newLabData := labData{}
+	if err := c.ShouldBind(&newLabData); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Error": "Not a valid lab data"})
+		return
+	}
 	id, _ := c.Cookie("userID")
 	userID, _ := strconv.Atoi(id)
-	testRes := c.PostForm("testResult")
-	expRes := c.PostForm("expectedResult")
-	comment := c.PostForm("Comment")
-	if testRes, err := strconv.ParseFloat(testRes, 64); err == nil {
-		if expRes, err := strconv.ParseFloat(expRes, 64); err == nil {
-			if err := labController.AddNewLabResult(uint(userID), expRes, testRes, comment); err != nil {
-				c.HTML(http.StatusBadRequest, "input-lab.html", gin.H{
-					"ErrorTitle":   "Не списывать!",
-					"ErrorMessage": "Теоретические данные слишком похожи на практику",
-				})
-			}
-		}
-	} else {
-		log.Println(err)
+
+	if err := labController.AddNewLabResult(uint(userID), newLabData.TestResult, newLabData.ExpectedResult, newLabData.Comment); err != nil {
 		c.HTML(http.StatusBadRequest, "input-lab.html", gin.H{
-			"ErrorTitle":   "Creating lab report failed",
-			"ErrorMessage": "Invalid data"})
+			"ErrorTitle":   "Не списывать!",
+			"ErrorMessage": "Теоретические данные слишком похожи на практику",
+		})
 		return
 	}
 	c.Redirect(http.StatusMovedPermanently, "/labs/show")
