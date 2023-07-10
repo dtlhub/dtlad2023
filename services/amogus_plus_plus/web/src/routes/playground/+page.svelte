@@ -1,19 +1,18 @@
 <script>
   import { enhance } from '$app/forms';
-  import { currentUser } from '$lib/pocketbase';
 
-  const workspaces = [
-    { id: 0, name: 'aboba' },
-    { id: 1, name: 'amogus' },
-    { id: 2, name: 'something' },
-    { id: 3, name: 'fuckthisshit' }
-  ];
+  /** @typedef {{id: string, name: string}} Workspace */
+
+  /** @type {{workspaces: Workspace[]}}*/
+  export let data;
 </script>
 
+<h1>CHOOSE WORKSPACE TO WORK IN</h1>
+
 <ul>
-  {#each workspaces as workspace}
+  {#each data.workspaces as workspace}
     <li>
-      <a href="/{$currentUser?.username}/workspace/{workspace.id}">{workspace.name}</a>
+      <a href="/workspace/{workspace.id}">{workspace.name}</a>
       <form method="POST" action="?/deleteWorkspace" use:enhance>
         <input hidden name="workspaceId" value={workspace.id} />
         <button>DELETE</button>
@@ -35,6 +34,12 @@
 </ul>
 
 <style lang="scss">
+  h1 {
+    font-size: 2em;
+    color: var(--white);
+    margin-bottom: 1em;
+  }
+
   ul {
     li {
       display: flex;
