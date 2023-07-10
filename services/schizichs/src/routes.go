@@ -45,15 +45,12 @@ func showRegisterPage(c *gin.Context) {
 func RegisterNewUser(c *gin.Context) {
 	newUserData := userData{}
 	if err := c.ShouldBind(&newUserData); err != nil {
-		c.HTML(http.StatusBadRequest, "register.html", gin.H{
-			"ErrorTitle":   "Registration failed",
-			"ErrorMessage": "Not a valid user data",
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"Error": "not a valid user data",
 		})
 		return
 	}
-	//	username := c.PostForm("username")
-	//	password := c.PostForm("password")
-	//
+
 	if err := userController.RegisterUser(newUserData.Username, newUserData.Password); err != nil {
 		c.HTML(http.StatusBadRequest, "register.html", gin.H{
 			"ErrorTitle":   "Registration failed",
@@ -90,7 +87,7 @@ func LoginUser(c *gin.Context) {
 
 func LogoutUser(c *gin.Context) {
 	deauthenticateUser(c)
-	c.JSON(200, gin.H{"NIGGEr": "DALE"})
+	c.Redirect(http.StatusMovedPermanently, "/")
 }
 
 func showLabsPage(c *gin.Context) {
