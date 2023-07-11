@@ -112,7 +112,10 @@
     <!-- [PLAYER] WAS THE IMPOSTOR -->
     <tr>
       <td class="code"><span class="var">[PLAYER]</span> WAS THE IMPOSTOR</td>
-      <td>If <span class="var">[PLAYER]</span> is not 0, end the program at that line</td>
+      <td
+        >If <span class="var">[PLAYER]</span> is not <span class="value">0</span>, end the program
+        at that line</td
+      >
     </tr>
 
     <!-- [PLAYER] GOES UP (BY [VALUE]) -->

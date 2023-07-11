@@ -24,7 +24,7 @@
 
       background-color: var(--surface);
 
-      border: 1px solid var(--white);
+      border: 2px solid var(--white);
       border-radius: 1em;
 
       font-family: inherit;
@@ -33,20 +33,22 @@
     `
   };
 
-  let value = '';
+  let editorContent = '';
+  let stdin = '';
+  let stdout = '';
 
   /** @type {string | null} */
   let activeFile = null;
 
   function updateFileContents() {
     if (activeFile === null) {
-      value = '';
+      editorContent = '';
       return;
     }
 
     fetch(`/workspace/${data.id}/${activeFile}`)
       .then((response) => response.json())
-      .then((data) => (value = data));
+      .then((data) => (editorContent = data));
   }
 
   function saveData() {
@@ -56,7 +58,7 @@
 
     fetch(`/workspace/${data.id}/${activeFile}`, {
       method: 'POST',
-      body: JSON.stringify({ filename: activeFile, content: value })
+      body: JSON.stringify({ filename: activeFile, content: editorContent })
     });
   }
 
@@ -130,14 +132,25 @@
 
   <section id="editor">
     {#if CodeJar}
-      <svelte:component this={CodeJar} bind:value {...codejarConfig} />
+      <svelte:component this={CodeJar} bind:value={editorContent} {...codejarConfig} />
     {:else}
       <p>Editor is loading</p>
       <p>You must have JavaScript enabled</p>
     {/if}
   </section>
 
-  <section id="extra" />
+  <section id="interactive">
+    <section>
+      <h3>STDIN</h3>
+      <textarea id="stdin" bind:value={stdin} />
+    </section>
+    <section>
+      <h3>STDOUT</h3>
+      <pre id="stdout">{stdout}</pre>
+    </section>
+
+    <button>RUN</button>
+  </section>
 </div>
 
 <style lang="scss">
@@ -269,8 +282,51 @@
       overflow-x: auto;
     }
 
-    #extra {
-      border: 1px solid cyan;
+    #interactive {
+      overflow: auto;
+      text-align: center;
+
+      section {
+        margin-bottom: 1em;
+
+        h3 {
+          margin-bottom: 0.5em;
+        }
+      }
+
+      textarea,
+      pre {
+        width: 100%;
+        height: 6em;
+        resize: none;
+        overflow: auto;
+        padding: 0.2em 0.4em;
+
+        box-sizing: border-box;
+        background: none;
+        border: 2px solid var(--white);
+        outline: none;
+        border-radius: 0.4em;
+
+        color: var(--white);
+        font-family: inherit;
+        font-size: 1em;
+        text-align: left;
+      }
+
+      button {
+        background-color: var(--lime);
+        border: none;
+        border-radius: 0.4em;
+        outline: none;
+        font-size: 0.8em;
+        padding: 0.2em 2em;
+
+        &:hover {
+          opacity: 0.8;
+          cursor: pointer;
+        }
+      }
     }
 
     h3 {
