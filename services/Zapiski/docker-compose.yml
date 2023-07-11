@@ -1,0 +1,7 @@
+version: '1.0'
+services:
+  zapiski:
+    build: ./
+    restart: always
+    ports:
+      - 5712:5712
