@@ -15,15 +15,15 @@
 >
   <section>
     <label for="username">Username</label>
-    <input id="username" name="username" type="text" size="50" />
+    <input id="username" name="username" type="text" size="50" required />
   </section>
   <section>
     <label for="email">Email</label>
-    <input id="email" name="email" type="email" size="50" />
+    <input id="email" name="email" type="email" size="50" required />
   </section>
   <section>
     <label for="password">Password</label>
-    <input id="password" name="password" type="password" size="50" />
+    <input id="password" name="password" type="password" size="50" minlength="5" required />
   </section>
 
   <button type="submit">Sign up</button>

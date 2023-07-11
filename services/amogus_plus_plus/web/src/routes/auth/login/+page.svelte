@@ -15,14 +15,14 @@
 >
   <section>
     <label for="username">Username</label>
-    <input id="username" name="username" type="text" size="50" />
+    <input id="username" name="username" type="text" size="50" required />
   </section>
   <section>
     <label for="password">Password</label>
-    <input id="password" name="password" type="password" size="50" />
+    <input id="password" name="password" type="password" size="50" required />
   </section>
 
-  <button type="submit">Sign up</button>
+  <button type="submit">Log in</button>
 </form>
 
 <style lang="scss">
