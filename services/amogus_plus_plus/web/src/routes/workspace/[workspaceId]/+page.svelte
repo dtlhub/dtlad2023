@@ -303,7 +303,7 @@
         padding: 0.2em 0.4em;
 
         box-sizing: border-box;
-        background: none;
+        background-color: var(--surface);
         border: 2px solid var(--white);
         outline: none;
         border-radius: 0.4em;
