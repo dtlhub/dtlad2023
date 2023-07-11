@@ -71,7 +71,8 @@
 
   onMount(() => {
     if (data.files.length !== 0) {
-      updateFileContents(data.files[0]);
+      activeFile = data.files[0];
+      updateFileContents();
     }
   });
 </script>
