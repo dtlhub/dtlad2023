@@ -2,7 +2,7 @@ import { LOCAL_POCKETBASE_ADDRESS } from '$env/static/private';
 import { error } from '@sveltejs/kit';
 import PocketBase from 'pocketbase';
 
-export const pocketbase = new PocketBase(LOCAL_POCKETBASE_ADDRESS);
+export const pocketbase = new PocketBase(LOCAL_POCKETBASE_ADDRESS).autoCancellation(false);
 
 /**
  * @param {any} err

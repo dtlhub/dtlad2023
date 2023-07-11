@@ -1,6 +1,24 @@
 /** @typedef {import('./abstractStatements').StatementBase} StatementBase */
 
 class StatementMixin {
+  /**
+   *
+   * @param {RegExp} re
+   * @param {string} line
+   */
+  constructor(re, line) {
+    this.re = re;
+    this.line = line;
+
+    const parts = re.exec(line);
+    if (parts === null || line.trimStart() != parts[0]) {
+      throw Error("Statement didn't match");
+    }
+
+    this.parts = parts;
+    this.whitespacePrefix = line.substring(0, this.parts.index);
+  }
+
   is_condition() {
     return false;
   }
@@ -25,9 +43,7 @@ class StatementMixin {
 export class CommentBase extends StatementMixin {
   /** @param {string} line */
   constructor(line) {
-    super();
-
-    this.line = line;
+    super(/.*/, line);
   }
 }
 
@@ -38,15 +54,8 @@ export class CommentBase extends StatementMixin {
 export class ConditionBase extends StatementMixin {
   /** @param {string} line */
   constructor(line) {
-    super();
-
-    const parts = /IF ITS NOT ([a-zA-Z_]+[a-zA-Z0-9_]*) THEN VOTE ME/.exec(line);
-
-    if (parts === null) {
-      throw Error("Statement didn'd match");
-    }
-
-    this.varName = parts[1];
+    super(/IF ITS NOT ([a-zA-Z_]+[a-zA-Z0-9_]*) THEN VOTE ME/, line);
+    this.varName = this.parts[1];
   }
 
   is_condition() {
@@ -61,19 +70,12 @@ export class ConditionBase extends StatementMixin {
 export class DecrementBase extends StatementMixin {
   /** @param {string} line */
   constructor(line) {
-    super();
+    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) GOES DOWN( BY [0-9]+)?/, line);
+    this.varName = this.parts[1];
 
-    const parts = /([a-zA-Z_]+[a-zA-Z0-9_]*) GOES DOWN( BY [0-9]+)?/.exec(line);
-
-    if (parts === null) {
-      throw Error("Statement didn't match");
-    }
-
-    this.varName = parts[1];
-
-    if (parts[2]) {
+    if (this.parts[2]) {
       this.byPresent = true;
-      this.value = Number.parseInt(parts[2].slice(3));
+      this.value = Number.parseInt(this.parts[2].slice(3));
     } else {
       this.byPresent = false;
       this.value = 1;
@@ -90,15 +92,8 @@ export class DeleteFileBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super();
-
-    const parts = /GAME ([a-zA-Z0-9.-_]+) HAS FINISHED/.exec(line);
-
-    if (parts === null) {
-      throw Error("Statement didn'd match");
-    }
-
-    this.streamName = parts[1];
+    super(/GAME ([a-zA-Z0-9.-_]+) HAS FINISHED/, line);
+    this.streamName = this.parts[1];
   }
 }
 
@@ -111,11 +106,7 @@ export class EndBlockBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super();
-
-    if (line != 'ENDBLOCKUS') {
-      throw Error("Statement didn'd match");
-    }
+    super(/ENDBLOCKUS/, line);
   }
 
   is_block_end() {
@@ -132,15 +123,8 @@ export class ExitBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super();
-
-    const parts = /([a-zA-Z_]+[a-zA-Z0-9_]*) WAS THE IMPOSTOR/.exec(line);
-
-    if (parts === null) {
-      throw Error("Statement didn'd match");
-    }
-
-    this.varName = parts[1];
+    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) WAS THE IMPOSTOR/, line);
+    this.varName = this.parts[1];
   }
 }
 
@@ -153,19 +137,13 @@ export class IncrementBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super();
+    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) GOES UP( BY [0-9]+)?/, line);
 
-    const parts = /([a-zA-Z_]+[a-zA-Z0-9_]*) GOES UP( BY [0-9]+)?/.exec(line);
+    this.varName = this.parts[1];
 
-    if (parts === null) {
-      throw Error("Statement didn't match");
-    }
-
-    this.varName = parts[1];
-
-    if (parts[2]) {
+    if (this.parts[2]) {
       this.byPresent = true;
-      this.value = Number.parseInt(parts[2].slice(3));
+      this.value = Number.parseInt(this.parts[2].slice(3));
     } else {
       this.byPresent = false;
       this.value = 1;
@@ -182,15 +160,8 @@ export class InputBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super();
-
-    const parts = /([a-zA-Z_]+[a-zA-Z0-9_]*) WHO ARE YOU/.exec(line);
-
-    if (parts === null) {
-      throw Error("Statement didn'd match");
-    }
-
-    this.varName = parts[1];
+    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) WHO ARE YOU/, line);
+    this.varName = this.parts[1];
   }
 }
 
@@ -203,15 +174,8 @@ export class LoopBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super();
-
-    const parts = /WHILE ITS NOT ([a-zA-Z_]+[a-zA-Z0-9_]*) VOTE ME/.exec(line);
-
-    if (parts === null) {
-      throw Error("Statement didn'd match");
-    }
-
-    this.varName = parts[1];
+    super(/WHILE ITS NOT ([a-zA-Z_]+[a-zA-Z0-9_]*) VOTE ME/, line);
+    this.varName = this.parts[1];
   }
 
   is_loop() {
@@ -228,15 +192,8 @@ export class PrintBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super();
-
-    const parts = /([a-zA-Z_]+[a-zA-Z0-9_]*) CAN VOUCH GO AND TELL THEM COME ON/.exec(line);
-
-    if (parts === null) {
-      throw Error("Statement didn'd match");
-    }
-
-    this.varName = parts[1];
+    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) CAN VOUCH GO AND TELL THEM COME ON/, line);
+    this.varName = this.parts[1];
   }
 }
 
@@ -249,18 +206,10 @@ export class RandomBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super();
-
-    const parts =
-      /IDK WHAT ([a-zA-Z_]+[a-zA-Z0-9_]*) IS BUT ITS BETWEEN ([0-9]+) AND ([0-9]+)/.exec(line);
-
-    if (parts === null) {
-      throw Error("Statement didn'd match");
-    }
-
-    this.varName = parts[1];
-    this.min = Number.parseInt(parts[2]);
-    this.max = Number.parseInt(parts[3]);
+    super(/IDK WHAT ([a-zA-Z_]+[a-zA-Z0-9_]*) IS BUT ITS BETWEEN ([0-9]+) AND ([0-9]+)/, line);
+    this.varName = this.parts[1];
+    this.min = Number.parseInt(this.parts[2]);
+    this.max = Number.parseInt(this.parts[3]);
   }
 }
 
@@ -273,16 +222,9 @@ export class ReadFileBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super();
-
-    const parts = /([a-zA-Z_]+[a-zA-Z0-9_]*) HAS LEFT THE ([a-zA-Z0-9.-_]+)/.exec(line);
-
-    if (parts === null) {
-      throw Error("Statement didn'd match");
-    }
-
-    this.varName = parts[1];
-    this.streamName = parts[2];
+    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) HAS LEFT THE ([a-zA-Z0-9.-_]+)/, line);
+    this.varName = this.parts[1];
+    this.streamName = this.parts[2];
   }
 }
 
@@ -295,11 +237,7 @@ export class StartBlockBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super();
-
-    if (line != 'BLOCKUS') {
-      throw Error("Statement didn'd match");
-    }
+    super(/BLOCKUS/, line);
   }
 
   is_block_start() {
@@ -316,17 +254,9 @@ export class ValueAssignmentBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super();
-
-    const parts = /GUYS I CAN VOUCH ([a-zA-Z_]+[a-zA-Z0-9_]*) IS ([0-9]+)/.exec(line);
-
-    if (parts === null) {
-      throw Error("Statement didn'd match");
-    }
-
-    this.varName = parts[1];
-    this.value = parts[2];
-    console.log();
+    super(/GUYS I CAN VOUCH ([a-zA-Z_]+[a-zA-Z0-9_]*) IS ([0-9]+)/, line);
+    this.varName = this.parts[1];
+    this.value = this.parts[2];
   }
 }
 
@@ -339,16 +269,9 @@ export class VariableAssignmentBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super();
-
-    const parts = /([a-zA-Z_]+[a-zA-Z0-9_]*) IS JUST LIKE ([a-zA-Z_]+[a-zA-Z0-9_]*)/.exec(line);
-
-    if (parts === null) {
-      throw Error("Statement didn'd match");
-    }
-
-    this.writeToVarName = parts[1];
-    this.readFromVarName = parts[2];
+    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) IS JUST LIKE ([a-zA-Z_]+[a-zA-Z0-9_]*)/, line);
+    this.writeToVarName = this.parts[1];
+    this.readFromVarName = this.parts[2];
   }
 }
 
@@ -361,15 +284,8 @@ export class WriteFileBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super();
-
-    const parts = /([a-zA-Z_]+[a-zA-Z0-9_]*) HAS JOINED THE ([a-zA-Z0-9.-_]+)/.exec(line);
-
-    if (parts === null) {
-      throw Error("Statement didn'd match");
-    }
-
-    this.varName = parts[1];
-    this.streamName = parts[2];
+    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) HAS JOINED THE ([a-zA-Z0-9.-_]+)/, line);
+    this.varName = this.parts[1];
+    this.streamName = this.parts[2];
   }
 }

@@ -26,7 +26,10 @@ import {
  */
 export class HighlightableComment extends CommentBase {
   highlight() {
-    return `<span style="color: color-mix(in srgb, var(--white), var(--surface))">${this.line}</span>`;
+    return (
+      this.whitespacePrefix +
+      `<span style="color: color-mix(in srgb, var(--white), var(--surface))">${this.line}</span>`
+    );
   }
 }
 
@@ -36,7 +39,10 @@ export class HighlightableComment extends CommentBase {
  */
 export class HighlightableCondition extends ConditionBase {
   highlight() {
-    return `<span style="color: var(--white)">IF ITS NOT <span style="color: var(--cyan)">${this.varName}</span> THEN VOTE ME</span>`;
+    return (
+      this.whitespacePrefix +
+      `<span style="color: var(--white)">IF ITS NOT <span style="color: var(--cyan)">${this.varName}</span> THEN VOTE ME</span>`
+    );
   }
 }
 
@@ -51,7 +57,7 @@ export class HighlightableDecrement extends DecrementBase {
     if (this.byPresent) {
       by = `<span style="color: var(--yellow)">BY</span> <span style="color: var(--red)">${this.value}</span>`;
     }
-    return `<span style="color: var(--white)">${base} ${by}</span>`;
+    return this.whitespacePrefix + `<span style="color: var(--white)">${base} ${by}</span>`;
   }
 }
 
@@ -61,7 +67,10 @@ export class HighlightableDecrement extends DecrementBase {
  */
 export class HighlightableDeleteFile extends DeleteFileBase {
   highlight() {
-    return `<span style="color: var(--white)">GAME <span style="color: var(--pink)">${this.streamName}</span> HAS FINISHED</span>`;
+    return (
+      this.whitespacePrefix +
+      `<span style="color: var(--white)">GAME <span style="color: var(--pink)">${this.streamName}</span> HAS FINISHED</span>`
+    );
   }
 }
 
@@ -81,7 +90,10 @@ export class HighlightableEndBlock extends EndBlockBase {
  */
 export class HighlightableExit extends ExitBase {
   highlight() {
-    return `<span style="color: var(--white)"><span style="color: var(--cyan)">${this.varName}</span> WAS THE IMPOSTOR</span>`;
+    return (
+      this.whitespacePrefix +
+      `<span style="color: var(--white)"><span style="color: var(--cyan)">${this.varName}</span> WAS THE IMPOSTOR</span>`
+    );
   }
 }
 
@@ -96,7 +108,7 @@ export class HighlightableIncrement extends IncrementBase {
     if (this.byPresent) {
       by = `<span style="color: var(--yellow)">BY</span> <span style="color: var(--red)">${this.value}</span>`;
     }
-    return `<span style="color: var(--white)">${base} ${by}</span>`;
+    return this.whitespacePrefix + `<span style="color: var(--white)">${base} ${by}</span>`;
   }
 }
 
@@ -106,7 +118,10 @@ export class HighlightableIncrement extends IncrementBase {
  */
 export class HighlightableInput extends InputBase {
   highlight() {
-    return `<span style="color: var(--white)"><span style="color: var(--cyan)">${this.varName}</span> WHO ARE YOU</span>`;
+    return (
+      this.whitespacePrefix +
+      `<span style="color: var(--white)"><span style="color: var(--cyan)">${this.varName}</span> WHO ARE YOU</span>`
+    );
   }
 }
 
@@ -116,7 +131,10 @@ export class HighlightableInput extends InputBase {
  */
 export class HighlightableLoop extends LoopBase {
   highlight() {
-    return `<span style="color: var(--white)">WHILE ITS NOT <span style="color: var(--cyan)">${this.varName}</span> VOTE ME</span>`;
+    return (
+      this.whitespacePrefix +
+      `<span style="color: var(--white)">WHILE ITS NOT <span style="color: var(--cyan)">${this.varName}</span> VOTE ME</span>`
+    );
   }
 }
 
@@ -126,7 +144,10 @@ export class HighlightableLoop extends LoopBase {
  */
 export class HighlightablePrint extends PrintBase {
   highlight() {
-    return `<span style="color: var(--white)"><span style="color: var(--cyan)">${this.varName}</span> CAN VOUCH GO ON AND TELL THEM COME ON</span>`;
+    return (
+      this.whitespacePrefix +
+      `<span style="color: var(--white)"><span style="color: var(--cyan)">${this.varName}</span> CAN VOUCH GO ON AND TELL THEM COME ON</span>`
+    );
   }
 }
 
@@ -136,7 +157,10 @@ export class HighlightablePrint extends PrintBase {
  */
 export class HighlightableRandom extends RandomBase {
   highlight() {
-    return `<span style="color: var(--white)">IDK WHAT <span style="color: var(--cyan)">${this.varName}</span> IS BUT ITS BETWEEN <span style="color: var(--red)">${this.min}</span> AND <span style="color: var(--red)">${this.max}</span></span>`;
+    return (
+      this.whitespacePrefix +
+      `<span style="color: var(--white)">IDK WHAT <span style="color: var(--cyan)">${this.varName}</span> IS BUT ITS BETWEEN <span style="color: var(--red)">${this.min}</span> AND <span style="color: var(--red)">${this.max}</span></span>`
+    );
   }
 }
 
@@ -146,7 +170,10 @@ export class HighlightableRandom extends RandomBase {
  */
 export class HighlightableReadFile extends ReadFileBase {
   highlight() {
-    return `<span style="color: var(--white)"><span style="color: var(--cyan)">${this.varName}</span> HAS LEFT THE <span style="color: var(--pink)">${this.streamName}</span></span>`;
+    return (
+      this.whitespacePrefix +
+      `<span style="color: var(--white)"><span style="color: var(--cyan)">${this.varName}</span> HAS LEFT THE <span style="color: var(--pink)">${this.streamName}</span></span>`
+    );
   }
 }
 
@@ -166,7 +193,10 @@ export class HighlightableStartBlock extends StartBlockBase {
  */
 export class HighlightableValueAssignment extends ValueAssignmentBase {
   highlight() {
-    return `<span style="color: var(--white)">GUYS I CAN VOUCH <span style="color: var(--cyan)">${this.varName}</span> IS <span style="color: var(--red)">${this.value}</span></span>`;
+    return (
+      this.whitespacePrefix +
+      `<span style="color: var(--white)">GUYS I CAN VOUCH <span style="color: var(--cyan)">${this.varName}</span> IS <span style="color: var(--red)">${this.value}</span></span>`
+    );
   }
 }
 
@@ -176,7 +206,10 @@ export class HighlightableValueAssignment extends ValueAssignmentBase {
  */
 export class HighlightableVariableAssignment extends VariableAssignmentBase {
   highlight() {
-    return `<span style="color: var(--white)"><span style="color: var(--cyan)">${this.writeToVarName}</span> IS JUST LIKE <span style="color: var(--cyan)">${this.readFromVarName}</span></span>`;
+    return (
+      this.whitespacePrefix +
+      `<span style="color: var(--white)"><span style="color: var(--cyan)">${this.writeToVarName}</span> IS JUST LIKE <span style="color: var(--cyan)">${this.readFromVarName}</span></span>`
+    );
   }
 }
 
@@ -186,7 +219,10 @@ export class HighlightableVariableAssignment extends VariableAssignmentBase {
  */
 export class HighlightableWriteFile extends WriteFileBase {
   highlight() {
-    return `<span style="color: var(--white)"><span style="color: var(--cyan)">${this.varName}</span> HAS JOINED THE <span style="color: var(--pink)">${this.streamName}</span></span>`;
+    return (
+      this.whitespacePrefix +
+      `<span style="color: var(--white)"><span style="color: var(--cyan)">${this.varName}</span> HAS JOINED THE <span style="color: var(--pink)">${this.streamName}</span></span>`
+    );
   }
 }
 
