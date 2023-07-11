@@ -7,3 +7,4 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 **/*Zone.Identifier
+data
