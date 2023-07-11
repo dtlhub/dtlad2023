@@ -11,7 +11,7 @@ class StatementMixin {
     this.line = line;
 
     const parts = re.exec(line);
-    if (parts === null || line.trimStart() != parts[0]) {
+    if (parts === null || line.trimStart() != parts[0].trimStart()) {
       throw Error("Statement didn't match");
     }
 
@@ -43,7 +43,7 @@ class StatementMixin {
 export class CommentBase extends StatementMixin {
   /** @param {string} line */
   constructor(line) {
-    super(/.*/, line);
+    super(/^.*$/, line);
   }
 }
 

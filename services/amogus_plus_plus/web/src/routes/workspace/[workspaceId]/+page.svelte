@@ -130,12 +130,7 @@
 
   <section id="editor">
     {#if CodeJar}
-      <svelte:component
-        this={CodeJar}
-        bind:value
-        on:change={() => console.log(value)}
-        {...codejarConfig}
-      />
+      <svelte:component this={CodeJar} bind:value {...codejarConfig} />
     {:else}
       <p>Editor is loading</p>
       <p>You must have JavaScript enabled</p>

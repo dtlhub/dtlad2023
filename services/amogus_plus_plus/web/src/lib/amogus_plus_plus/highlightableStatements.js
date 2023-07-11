@@ -55,9 +55,9 @@ export class HighlightableDecrement extends DecrementBase {
     const base = `<span style="color: var(--cyan)">${this.varName}</span> GOES DOWN`;
     let by = '';
     if (this.byPresent) {
-      by = `<span style="color: var(--yellow)">BY</span> <span style="color: var(--red)">${this.value}</span>`;
+      by = `<span style="color: var(--yellow)"> BY</span> <span style="color: var(--red)">${this.value}</span>`;
     }
-    return this.whitespacePrefix + `<span style="color: var(--white)">${base} ${by}</span>`;
+    return this.whitespacePrefix + `<span style="color: var(--white)">${base}${by}</span>`;
   }
 }
 
@@ -106,9 +106,9 @@ export class HighlightableIncrement extends IncrementBase {
     const base = `<span style="color: var(--cyan)">${this.varName}</span> GOES UP`;
     let by = '';
     if (this.byPresent) {
-      by = `<span style="color: var(--yellow)">BY</span> <span style="color: var(--red)">${this.value}</span>`;
+      by = `<span style="color: var(--yellow)"> BY</span> <span style="color: var(--red)">${this.value}</span>`;
     }
-    return this.whitespacePrefix + `<span style="color: var(--white)">${base} ${by}</span>`;
+    return this.whitespacePrefix + `<span style="color: var(--white)">${base}${by}</span>`;
   }
 }
 

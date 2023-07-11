@@ -1,7 +1,7 @@
 /**
  * @param {string} line
  * @param {any[]} statements
- * @param {DefaultStatement} DefaultStatement
+ * @param {any} DefaultStatement
  * @returns {any}
  */
 export function getStatement(line, statements, DefaultStatement) {

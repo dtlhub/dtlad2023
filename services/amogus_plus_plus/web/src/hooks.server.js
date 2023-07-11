@@ -13,9 +13,6 @@ export const handle = async ({ event, resolve }) => {
   event.locals.pocketbase = pocketbase;
   event.locals.user = structuredClone(pocketbase.authStore.model);
 
-  console.log('Handling request');
-  console.log(event.locals);
-  console.log(event.request.headers.get('cookie'));
   const response = await resolve(event);
 
   response.headers.set('set-cookie', pocketbase.authStore.exportToCookie({ httpOnly: false }));
