@@ -28,7 +28,7 @@
   },
   "type": "module",
   "dependencies": {
-    "codejar": "^3.7.0",
+    "@novacbn/svelte-codejar": "^0.1.2",
     "pocketbase": "^0.15.2"
   }
 }

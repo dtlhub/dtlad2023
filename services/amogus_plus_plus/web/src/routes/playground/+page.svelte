@@ -1,9 +1,7 @@
 <script>
   import { enhance } from '$app/forms';
 
-  /** @typedef {{id: string, name: string}} Workspace */
-
-  /** @type {{workspaces: Workspace[]}}*/
+  /** @type {import('./$types').PageData} */
   export let data;
 </script>
 

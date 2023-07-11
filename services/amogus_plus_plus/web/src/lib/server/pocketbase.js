@@ -6,6 +6,7 @@ export const pocketbase = new PocketBase(LOCAL_POCKETBASE_ADDRESS);
 
 /**
  * @param {any} err
+ * @returns {never}
  */
 export function tryHandlePocketbaseError(err) {
   let errorToThrow;

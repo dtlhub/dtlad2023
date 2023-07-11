@@ -1,6 +1,7 @@
 import { mustBeLoggedIn } from '$lib/auth/guards.js';
 import { tryHandlePocketbaseError } from '$lib/server/pocketbase.js';
-import { redirect } from '@sveltejs/kit';
+import { deleteWorkspace } from '$lib/server/workspaceUtils.js';
+import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ locals }) {
   mustBeLoggedIn(locals);
@@ -16,7 +17,6 @@ export async function load({ locals }) {
   }
 
   return {
-    // @ts-ignore
     workspaces: workspaces.map((pbWorkspace) => {
       return { id: pbWorkspace.id, name: pbWorkspace.name };
     })
@@ -55,6 +55,12 @@ export const actions = {
       await locals.pocketbase.collection('workspaces').delete(data.workspaceId);
     } catch (err) {
       tryHandlePocketbaseError(err);
+    }
+
+    try {
+      deleteWorkspace(data.workspaceId);
+    } catch (err) {
+      throw error(500, 'Unable to delete workspace');
     }
 
     throw redirect(302, '/playground');
