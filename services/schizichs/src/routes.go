@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/YellowPhil/pwnAD/controllers"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,7 +17,7 @@ type userData struct {
 type labData struct {
 	TestResult     float64 `form:"testResult" json:"testResult" binding:"required,numeric"`
 	ExpectedResult float64 `form:"expectedResult" json:"expectedResult" binding:"required,numeric"`
-	Comment        string  `form:"comment" json:"comment"`
+	Comment        string  `form:"comment" json:"comment" binding:"required"`
 }
 
 func authenticateUser(c *gin.Context, id uint, sessionToken string) {
@@ -28,13 +27,12 @@ func authenticateUser(c *gin.Context, id uint, sessionToken string) {
 }
 
 func deauthenticateUser(c *gin.Context) {
-	c.SetCookie("token", "goldTrigger", 100, "/", "localhost:8080", false, true)
-	c.SetCookie("userID", "-1", 100, "/", "localhost:8080", false, true)
+	c.SetCookie("token", "", 100, "/", "", false, true)
+	c.SetCookie("userID", "", 100, "/", "", false, true)
 }
 
 func showMainPage(g *gin.Context) {
-	var results []controllers.LabResult
-	results = labController.GetLabs()
+	results := labController.GetLabs()
 	render(g, "index.html", gin.H{"header": "Home page", "payload": results})
 }
 
@@ -80,7 +78,6 @@ func LoginUser(c *gin.Context) {
 			"ErrorMessage": "Invalid credentials provided"})
 		return
 	}
-
 	authenticateUser(c, id, token)
 	render(c, "login-successful.html", gin.H{"title": "Login successful"})
 }
@@ -116,7 +113,7 @@ func AddLab(c *gin.Context) {
 	id, _ := c.Cookie("userID")
 	userID, _ := strconv.Atoi(id)
 
-	if err := labController.AddNewLabResult(uint(userID), newLabData.TestResult, newLabData.ExpectedResult, newLabData.Comment); err != nil {
+	if err := labController.AddNewLabResult(uint(userID), newLabData.ExpectedResult, newLabData.TestResult, newLabData.Comment); err != nil {
 		c.HTML(http.StatusBadRequest, "input-lab.html", gin.H{
 			"ErrorTitle":   "Не списывать!",
 			"ErrorMessage": "Теоретические данные слишком похожи на практику",

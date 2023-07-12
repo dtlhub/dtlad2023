@@ -29,7 +29,7 @@ func AuthMiddleWare() gin.HandlerFunc {
 			}
 		} else {
 			fmt.Println(err)
-			c.AbortWithStatusJSON(403, gin.H{"Error": "No userID cookie provided"})
+			c.AbortWithStatusJSON(43, gin.H{"Error": "No userID cookie provided"})
 			return
 		}
 		c.Next()

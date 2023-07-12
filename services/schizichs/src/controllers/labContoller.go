@@ -11,10 +11,14 @@ const measurements = 10
 const studentsCoefficient = 201
 const eps = 0.01
 
+type PublicResults struct {
+	Error    float64 `json:"eps"`
+	Expected float64 `json:"expected"`
+}
+
 type LabResult struct {
 	gorm.Model
-	Error      float64 `json:"eps"`
-	Expected   float64 `json:"expected"`
+	PublicResults
 	TestResult float64 `json:"testResult"`
 	Comment    string  `gorm:"size:255;" json:"comment"`
 	UserID     uint
@@ -34,7 +38,9 @@ func (lr *LabResult) calculateMeasurementError(expected, test float64) {
 
 func newLabResult(expected, testResult float64, comment string) *LabResult {
 	lr := &LabResult{
-		Expected:   expected,
+		PublicResults: PublicResults{
+			Expected: expected,
+		},
 		TestResult: testResult,
 		Comment:    comment,
 	}
