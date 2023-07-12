@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-import requests
+import socket
 
 from checklib import *
 from Zapiski_lib import *
@@ -17,10 +17,12 @@ class Checker(BaseChecker):
         self.mch = CheckMachine(self)
 
     def action(self, action, *args, **kwargs):
-        #try:
-        super(Checker, self).action(action, *args, **kwargs)
-        #except Exception as e:
-        #    self.cquit(Status.DOWN, 'Connection error', 'Got requests connection error ' + str(e))
+        try:
+            super(Checker, self).action(action, *args, **kwargs)
+        except TimeoutError:
+            self.cquit(Status.DOWN, 'Connection error', 'Got socket connection error')
+        except ConnectionError:
+            self.cquit(Status.DOWN, 'Connection error', 'Got socket connection error')
 
     def check(self):
         session = self.get_initialized_session()
@@ -64,7 +66,7 @@ class Checker(BaseChecker):
         value = self.mch.get_note(session, note_name_full)
         self.assert_eq(value, flag, "Note value is invalid", Status.CORRUPT)
         session.close()
-        self.cquit(Status.OK)
+        self.cquit(Status.OK, f'', f'')
 
 
 if __name__ == '__main__':

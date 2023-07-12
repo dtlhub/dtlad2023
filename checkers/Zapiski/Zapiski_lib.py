@@ -25,12 +25,12 @@ class CheckMachine:
 
     def login(self, conn: socket.socket, username_1: str, password: str, status: Status, registred: bool) -> str:
         if not registred:
+            conn.recv(1024)
             conn.send(b'1\n')
             conn.recv(1024)
         check = conn.send(password.encode() + b'\n')
         out = conn.recv(1024).decode()
         out += conn.recv(1024).decode()
-        print(out)
         username = re.findall(r'[0-9,A-z]+!', out)[0]
         username = username[:-1]
         self.c.assert_eq(username, username_1, 'Can\'t login', status)
