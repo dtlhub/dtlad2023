@@ -26,6 +26,7 @@ func Setup() (*gorm.DB, error) {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(database:3306)/%s?charset=utf8&parseTime=true", login, password, dbname)
 
+	//	dsn := "root:test123@tcp(localhost:3306)/testdb?charset=utf8&parseTime=true"
 	db, err := gorm.Open(mysql.New(mysql.Config{
 		DSN:        dsn,
 		DriverName: "mysql",

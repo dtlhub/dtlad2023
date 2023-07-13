@@ -15,6 +15,7 @@ type userData struct {
 }
 
 type labData struct {
+	LabName        string  `form:"labName" json:"labName" binding:"required"`
 	TestResult     float64 `form:"testResult" json:"testResult" binding:"required,numeric"`
 	ExpectedResult float64 `form:"expectedResult" json:"expectedResult" binding:"required,numeric"`
 	Comment        string  `form:"comment" json:"comment" binding:"required"`
@@ -49,13 +50,15 @@ func RegisterNewUser(c *gin.Context) {
 		return
 	}
 
-	if err := userController.RegisterUser(newUserData.Username, newUserData.Password); err != nil {
+	id, token, err := userController.RegisterUser(newUserData.Username, newUserData.Password)
+	if err != nil {
 		c.HTML(http.StatusBadRequest, "register.html", gin.H{
 			"ErrorTitle":   "Registration failed",
 			"ErrorMessage": "Username already taken",
 		})
 		return
 	}
+	authenticateUser(c, id, token)
 	render(c, "registration-successful.html", gin.H{"title": "Registered successfully"})
 }
 
@@ -91,7 +94,19 @@ func showLabsPage(c *gin.Context) {
 	id, _ := c.Cookie("userID")
 	userID, _ := strconv.Atoi(id)
 	labs := labController.GetUserLabs(uint(userID))
-	render(c, "labs.html", gin.H{"payload": labs})
+	if labName, ok := c.GetQuery("labname"); ok {
+		showSingleLabPage(c, uint(userID), labName)
+		return
+	}
+	render(c, "labs.html", gin.H{"title": "your labs", "payload": labs})
+}
+
+func showSingleLabPage(c *gin.Context, userID uint, labName string) {
+	if labs, ok := labController.GetLabByNameAndID(labName, userID); ok {
+		render(c, "labs.html", gin.H{"title": "Labs with name" + labName, "payload": labs})
+	} else {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Error": "No such lab"})
+	}
 }
 
 func showAddLabPage(c *gin.Context) {
@@ -101,7 +116,7 @@ func showAddLabPage(c *gin.Context) {
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
-	render(c, "input-lab.html", gin.H{"title": "Add lab", "user": user})
+	render(c, "input-lab.html", gin.H{"title": "Add lab", "Username": user.Username})
 }
 
 func AddLab(c *gin.Context) {
@@ -113,10 +128,10 @@ func AddLab(c *gin.Context) {
 	id, _ := c.Cookie("userID")
 	userID, _ := strconv.Atoi(id)
 
-	if err := labController.AddNewLabResult(uint(userID), newLabData.ExpectedResult, newLabData.TestResult, newLabData.Comment); err != nil {
+	if err := labController.AddNewLabResult(uint(userID), newLabData.ExpectedResult, newLabData.TestResult, newLabData.LabName, newLabData.Comment); err != nil {
 		c.HTML(http.StatusBadRequest, "input-lab.html", gin.H{
 			"ErrorTitle":   "Не списывать!",
-			"ErrorMessage": "Теоретические данные слишком похожи на практику",
+			"ErrorMessage": "Теоретические данные слишком похожи на практику или лабораторная с таким названием уже есть",
 		})
 		return
 	}

@@ -4,6 +4,7 @@
 
 {{ range .payload }}
     <div class="col-4 col-sm-4 col-md-3 col-xl-2 center">
+        <p>Название: {{.LabName}} </p>
         <p>Результат: {{.TestResult }}</p>
         <p>Теоретическое Значение: {{.Expected}} </p>
         <p>Погрешность: {{.Error}}</p>

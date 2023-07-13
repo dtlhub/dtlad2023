@@ -6,11 +6,13 @@
         <p class="bg-danger">
           {{.ErrorTitle}}: {{.ErrorMessage}}
         </p>
-        {{end}}
-        {{with .user }}
-            <legend>Отчет о лабораторной работе студента {{ .Username }}</legend>
-        {{ end }}
+      {{end}}
+        <legend>Отчет о лабораторной работе студента {{ .Username }}</legend>
         <form action="/labs/new" method="POST">
+          <div class="mb-3">
+            <label for="labName" class="form-label">Название лабораторной работы</label>
+            <input type="text" required="required" class="form-control" name="labName" id="labName">
+          </div>
           <div class="mb-3">
             <label for="expectedResult" class="form-label">Теоретическое значение</label>
             <input type="number" step="any" required="required" class="form-control" name="expectedResult" id="expectedResult" aria-describedby="hint">
@@ -24,8 +26,6 @@
             <label for="comment" class="form-label">Объяснение погрешности</label>
             <input type="text" required="required" class="form-control" name="comment" id="comment">
           </div>
-
-
           <button type="submit" class="btn btn-primary">Отправить на проверку</button>
         </form>
 

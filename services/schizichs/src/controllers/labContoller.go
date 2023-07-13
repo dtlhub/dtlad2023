@@ -14,6 +14,7 @@ const eps = 0.01
 type PublicResults struct {
 	Error    float64 `json:"eps"`
 	Expected float64 `json:"expected"`
+	LabName  string  `json:"labName"`
 }
 
 type LabResult struct {
@@ -36,10 +37,11 @@ func (lr *LabResult) calculateMeasurementError(expected, test float64) {
 	lr.Error = math.Sqrt(math.Pow(probabilityError, 2) + math.Pow(measurementError, 2))
 }
 
-func newLabResult(expected, testResult float64, comment string) *LabResult {
+func newLabResult(expected, testResult float64, labName, comment string) *LabResult {
 	lr := &LabResult{
 		PublicResults: PublicResults{
 			Expected: expected,
+			LabName:  labName,
 		},
 		TestResult: testResult,
 		Comment:    comment,
@@ -48,10 +50,25 @@ func newLabResult(expected, testResult float64, comment string) *LabResult {
 	return lr
 }
 
-func (lc *LabResultsController) GetLabs() []LabResult {
-	var results []LabResult
-	lc.db.Find(&results)
+func (lc *LabResultsController) GetLabs() []PublicResults {
+	var tmp []LabResult
+	var results []PublicResults
+	lc.db.Find(&tmp)
+	results = make([]PublicResults, len(tmp))
+	for i, v := range tmp {
+		results[i] = v.PublicResults
+	}
 	return results
+}
+
+func (lc *LabResultsController) GetLabByNameAndID(labName string, id uint) ([]LabResult, bool) {
+	var results []LabResult
+	user := &User{}
+	lc.db.First(&user, id)
+	if err := lc.db.Debug().Model(&LabResult{}).Where("user_id = ? AND lab_name = ?", id, labName).Find(&results).Error; err != nil {
+		return results, false
+	}
+	return results, true
 }
 
 func (lc *LabResultsController) GetUserLabs(id uint) []LabResult {
@@ -72,14 +89,13 @@ func (lc *LabResultsController) GetUserLabs(id uint) []LabResult {
 	return nigger
 }
 
-func (lc *LabResultsController) AddNewLabResult(userID uint, expectedResult, testResult float64, comment string) error {
+func (lc *LabResultsController) AddNewLabResult(userID uint, expectedResult, testResult float64, labName, comment string) error {
 	var user User
 
 	if math.Abs(expectedResult-testResult) < 100000 {
 		return errors.New("Student is cheating)")
 	}
-	newLab := newLabResult(expectedResult, testResult, comment)
+	newLab := newLabResult(expectedResult, testResult, labName, comment)
 	lc.db.First(&user, userID)
 	return lc.db.Model(&user).Association("Labs").Append(newLab)
-
 }
