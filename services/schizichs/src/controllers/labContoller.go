@@ -8,8 +8,8 @@ import (
 )
 
 const measurements = 10
-const studentsCoefficient = 201
-const eps = 0.01
+const studentsCoefficient = 100
+const eps = 0.1
 
 type PublicResults struct {
 	Error    float64 `json:"eps"`
@@ -73,20 +73,19 @@ func (lc *LabResultsController) GetLabByNameAndID(labName string, id uint) ([]La
 
 func (lc *LabResultsController) GetUserLabs(id uint) []LabResult {
 	var (
-		tmp    []LabResult
-		nigger []LabResult
 		user   User
+		tmp    []LabResult
 		result []LabResult
 	)
 	lc.db.First(&user, id)
-	lc.db.Model(user).Association("Labs").Find(&tmp)
+	lc.db.Model(user).Association("Labs").Find(&result)
 
 	// return all labs that are withing the small Error range
 	for _, res := range tmp {
-		lc.db.Model(&LabResult{}).Where("expected BETWEEN ? AND ?", res.Expected-eps, res.Expected+eps).Find(&result)
-		nigger = append(nigger, result...)
+		lc.db.Debug().Model(&LabResult{}).Where("expected = ? AND error <= ?", res.Expected, eps).Find(&tmp)
+		result = append(result, tmp...)
 	}
-	return nigger
+	return result
 }
 
 func (lc *LabResultsController) AddNewLabResult(userID uint, expectedResult, testResult float64, labName, comment string) error {

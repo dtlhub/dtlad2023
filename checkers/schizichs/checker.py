@@ -58,7 +58,7 @@ class Checker(BaseChecker):
         self.mch.register(session, username, password)
         self.mch.login(session, username, password, Status.MUMBLE)
         self.mch.add_lab(session, test_result, expected_result, lab_name_full, flag)
-        self.cquit(Status.OK, flag, f'{username}:{password}:{lab_name_full}')
+        self.cquit(Status.OK, lab_name_public, f'{username}:{password}:{lab_name_full}')
 
     def get(self, flag_id: str, flag: str, vuln: str):
         s = get_initialized_session()
