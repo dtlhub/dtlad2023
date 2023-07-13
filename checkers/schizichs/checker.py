@@ -7,7 +7,7 @@ from schizics_lib import *
 
 
 class Checker(BaseChecker):
-    vulns: int = 2
+    vulns: int = 3
     timeout: int = 5
     uses_attack_data: bool = True
 
@@ -25,43 +25,47 @@ class Checker(BaseChecker):
         session = get_initialized_session()
         username, password = rnd_username(), rnd_password()
 
-        note_name_full = rnd_string(10)
-        note_value = rnd_string(20)
+        comment = rnd_string(20)
+        lab_name = rnd_string(15)
+        expected_result = rnd_float(1, 300)
+        test_result = rnd_float(10000003000, 999999999999999)
 
         self.mch.register(session, username, password)
         self.mch.login(session, username, password, Status.MUMBLE)
-        self.mch.put_note(session, note_name_full, note_value)
-        value = self.mch.get_note(session, note_name_full, Status.MUMBLE)
+        self.mch.add_lab(session, test_result, expected_result, lab_name, comment)
+        value = self.mch.get_lab(session, lab_name, Status.MUMBLE)
 
-        self.assert_eq(value, note_value, "Note value is invalid")
-
+        self.assert_eq(value, comment, "Lab comment is not valid")
         self.cquit(Status.OK)
 
     def put(self, flag_id: str, flag: str, vuln: str):
         session = get_initialized_session()
         username, password = rnd_username(), rnd_password()
 
-        note_name_full = rnd_string(10)
-
+        lab_name_full = rnd_string(10)
         if vuln == "1":
-            note_name_full += "_1"
+            lab_name_full += "_1"
         elif vuln == "2":
-            note_name_full += "_2"
+            lab_name_full += "_2"
+        elif vuln == "3":
+            lab_name_full += "_3"
 
-        note_name_public = note_name_full[:5]
+        lab_name_public = lab_name_full[:5]
+
+        expected_result = rnd_float(1, 300)
+        test_result = rnd_float(10000003000, 999999999999999)
 
         self.mch.register(session, username, password)
         self.mch.login(session, username, password, Status.MUMBLE)
-        self.mch.put_note(session, note_name_full, flag)
-
-        self.cquit(Status.OK, note_name_public, f'{username}:{password}:{note_name_full}')
+        self.mch.add_lab(session, test_result, expected_result, lab_name_full, flag)
+        self.cquit(Status.OK, flag, f'{username}:{password}:{lab_name_full}')
 
     def get(self, flag_id: str, flag: str, vuln: str):
         s = get_initialized_session()
         username, password, note_name_full = flag_id.split(':')
 
         self.mch.login(s, username, password, Status.CORRUPT)
-        value = self.mch.get_note(s, note_name_full, Status.CORRUPT)
+        value = self.mch.get_lab(s, note_name_full, Status.CORRUPT)
 
         self.assert_eq(value, flag, "Note value is invalid", Status.CORRUPT)
 
