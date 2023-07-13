@@ -11,7 +11,7 @@ app.secret_key = 'kek'
 
 @app.route('/', methods=['GET'])
 def init():
-    return render_template('home.html')
+    return redirect(url_for('register'))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -26,11 +26,11 @@ def register():
         return render_template('register.html', error='User exists')
 
     try:
-        assert len(request.form['iv'] != 0)
+        assert len(request.form['iv']) != 0
         token_server = Tokens(bytes.fromhex(request.form['iv']))
     except:
         token_server = Tokens()
-
+    
     to_sign = dict()
     to_sign['username'] = username
     cookie = token_server.generate_token(json.dumps(to_sign).encode(), signature_type)
@@ -53,11 +53,11 @@ def login():
         return render_template('login.html', error='Bad login')
 
     try:
-        assert len(request.form['iv'] != 0)
+        assert len(request.form['iv']) != 0
         token_server = Tokens(bytes.fromhex(request.form['iv']))
     except:
         token_server = Tokens()
-    
+
     to_sign = dict()
     to_sign['username'] = username
     cookie = token_server.generate_token(json.dumps(to_sign).encode(), signature_type)
@@ -71,18 +71,17 @@ def login():
 def home():
     if 'token' not in request.cookies.keys():
         return redirect(url_for('register'))
-
     try:
-        assert len(request.form['iv'] != 0)
+        assert len(request.args['iv']) != 0
         token_server = Tokens(bytes.fromhex(request.args['iv']))
-    except:
+    except Exception as e:
         token_server = Tokens()
 
     assert token_server.validate_token(request.cookies['token'])
 
     user = token_server.get_data(request.cookies['token'])['username']
 
-    return render_template('home.html', flag=db.get_flag(user))
+    return render_template('home.html',flag=db.get_flag(user))
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0')

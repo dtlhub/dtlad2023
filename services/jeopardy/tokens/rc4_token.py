@@ -27,5 +27,4 @@ class RC4Token(Token):
         if token_type != b'ARC228':
             return False
 
-
         return self.__precompute(data) == signed
