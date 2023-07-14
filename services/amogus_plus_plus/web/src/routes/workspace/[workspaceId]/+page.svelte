@@ -40,7 +40,7 @@
   /** @type {string | null} */
   let activeFile = null;
 
-  function updateFileContents() {
+  function updateActiveFileContents() {
     if (activeFile === null) {
       editorContent = '';
       return;
@@ -48,33 +48,61 @@
 
     fetch(`/workspace/${data.id}/${activeFile}`)
       .then((response) => response.json())
-      .then((data) => (editorContent = data));
+      .then((jsonData) => (editorContent = jsonData));
   }
 
-  function saveData() {
+  function saveActiveFile() {
     if (activeFile === null) {
       return;
     }
 
     fetch(`/workspace/${data.id}/${activeFile}`, {
-      method: 'POST',
+      method: 'PUT',
       body: JSON.stringify({ filename: activeFile, content: editorContent })
     });
+  }
+
+  function executeActiveFile() {
+    if (activeFile === null) {
+      return;
+    }
+
+    saveActiveFile();
+
+    fetch(`/workspace/${data.id}/${activeFile}`, {
+      method: 'POST',
+      body: JSON.stringify({ filename: activeFile, stdin })
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          return { files: data.files, stdout };
+        }
+      })
+      .then((jsonData) => {
+        if (jsonData.errorMsg) {
+          alert(jsonData.errorMsg);
+        } else {
+          data.files = jsonData.files;
+          stdout = jsonData.stdout;
+        }
+      });
   }
 
   /** @param {Event} event */
   function onFileClick(event) {
     // @ts-ignore
     const newActiveFile = event.target.innerText;
-    saveData();
+    saveActiveFile();
     activeFile = newActiveFile;
-    updateFileContents();
+    updateActiveFileContents();
   }
 
   onMount(() => {
     if (data.files.length !== 0) {
       activeFile = data.files[0];
-      updateFileContents();
+      updateActiveFileContents();
     }
   });
 </script>
@@ -94,7 +122,7 @@
 
         <div class="file-buttons">
           {#if file === activeFile}
-            <form on:submit={saveData}>
+            <form on:submit={saveActiveFile}>
               <button class="save">SAVE</button>
             </form>
           {/if}
@@ -103,6 +131,7 @@
             action="?/deleteFile"
             use:enhance={() => {
               return async ({ result }) => {
+                // @ts-ignore
                 data.files = result.data;
                 await applyAction(result);
               };
@@ -120,6 +149,7 @@
       action="?/createFile"
       use:enhance={() => {
         return async ({ result }) => {
+          // @ts-ignore
           data.files = result.data;
           await applyAction(result);
         };
@@ -149,7 +179,9 @@
       <pre id="stdout">{stdout}</pre>
     </section>
 
-    <button>RUN</button>
+    <form on:submit={executeActiveFile}>
+      <button>RUN</button>
+    </form>
   </section>
 </div>
 

@@ -1,7 +1,8 @@
 /** @typedef {import('../../amogus_plus_plus/abstractStatements').ExecutableStatement} ExecutableStatement */
 
-import { getStatement } from '$lib/amogus_plus_plus/common';
 import {
+  CheckFileEofBase,
+  CheckStdinEofBase,
   CommentBase,
   ConditionBase,
   DecrementBase,
@@ -19,13 +20,39 @@ import {
   VariableAssignmentBase,
   WriteFileBase
 } from '$lib/amogus_plus_plus/statementsBases';
+import { appendToFile, removeFile } from '../workspaceUtils';
+
+/**
+ * @class
+ * @implements {ExecutableStatement}
+ */
+export class ExecutableCheckFileEof extends CheckFileEofBase {
+  /** @param {import("./runtime").default} runtime */
+  execute(runtime) {
+    const file = runtime.fileReader(this.streamName);
+    runtime.addToStorage(this.varName, file.reachedEof() ? 0 : 1);
+  }
+}
+
+/**
+ * @class
+ * @implements {ExecutableStatement}
+ */
+export class ExecutableCheckStdinEof extends CheckStdinEofBase {
+  /** @param {import("./runtime").default} runtime */
+  execute(runtime) {
+    runtime.addToStorage(this.varName, runtime.hasStdinReachedEof() ? 0 : 1);
+  }
+}
 
 /**
  * @class
  * @implements {ExecutableStatement}
  */
 export class ExecutableComment extends CommentBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  // eslint-disable-next-line no-unused-vars
+  execute(runtime) {}
 }
 
 /**
@@ -33,7 +60,11 @@ export class ExecutableComment extends CommentBase {
  * @implements {ExecutableStatement}
  */
 export class ExecutableCondition extends ConditionBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  execute(runtime) {
+    const value = runtime.getFromStorage(this.varName);
+    return value !== 0;
+  }
 }
 
 /**
@@ -41,7 +72,11 @@ export class ExecutableCondition extends ConditionBase {
  * @implements {ExecutableStatement}
  */
 export class ExecutableDecrement extends DecrementBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  execute(runtime) {
+    const currentValue = runtime.getFromStorage(this.varName);
+    runtime.addToStorage(this.varName, (currentValue - this.value + 256) % 256);
+  }
 }
 
 /**
@@ -49,7 +84,10 @@ export class ExecutableDecrement extends DecrementBase {
  * @implements {ExecutableStatement}
  */
 export class ExecutableDeleteFile extends DeleteFileBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  execute(runtime) {
+    removeFile(runtime.workspaceId, this.streamName);
+  }
 }
 
 /**
@@ -57,7 +95,17 @@ export class ExecutableDeleteFile extends DeleteFileBase {
  * @implements {ExecutableStatement}
  */
 export class ExecutableEndBlock extends EndBlockBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  // eslint-disable-next-line no-unused-vars
+  execute(runtime) {}
+}
+
+export class ExitError extends Error {
+  /** @param {string} stdout */
+  constructor(stdout) {
+    super();
+    this.stdout = stdout;
+  }
 }
 
 /**
@@ -65,7 +113,13 @@ export class ExecutableEndBlock extends EndBlockBase {
  * @implements {ExecutableStatement}
  */
 export class ExecutableExit extends ExitBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  execute(runtime) {
+    const value = runtime.getFromStorage(this.varName);
+    if (value !== 0) {
+      throw new ExitError(runtime.Stdout);
+    }
+  }
 }
 
 /**
@@ -73,7 +127,11 @@ export class ExecutableExit extends ExitBase {
  * @implements {ExecutableStatement}
  */
 export class ExecutableIncrement extends IncrementBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  execute(runtime) {
+    const currentValue = runtime.getFromStorage(this.varName);
+    runtime.addToStorage(this.varName, (currentValue + this.value) % 256);
+  }
 }
 
 /**
@@ -81,7 +139,11 @@ export class ExecutableIncrement extends IncrementBase {
  * @implements {ExecutableStatement}
  */
 export class ExecutableInput extends InputBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  execute(runtime) {
+    const value = runtime.readFromStdin();
+    runtime.addToStorage(this.varName, value);
+  }
 }
 
 /**
@@ -89,7 +151,11 @@ export class ExecutableInput extends InputBase {
  * @implements {ExecutableStatement}
  */
 export class ExecutableLoop extends LoopBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  execute(runtime) {
+    const value = runtime.getFromStorage(this.varName);
+    return value !== 0;
+  }
 }
 
 /**
@@ -97,7 +163,11 @@ export class ExecutableLoop extends LoopBase {
  * @implements {ExecutableStatement}
  */
 export class ExecutablePrint extends PrintBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  execute(runtime) {
+    const value = runtime.getFromStorage(this.varName);
+    runtime.writeToStdout(value);
+  }
 }
 
 /**
@@ -105,7 +175,14 @@ export class ExecutablePrint extends PrintBase {
  * @implements {ExecutableStatement}
  */
 export class ExecutableRandom extends RandomBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  execute(runtime) {
+    if (this.min > this.max) {
+      throw new Error(`Maximum value (${this.max}) can't be less than minimum (${this.min})`);
+    }
+    const value = Math.floor(Math.random() * (this.max + 1 - this.min)) + this.min;
+    runtime.addToStorage(this.varName, value);
+  }
 }
 
 /**
@@ -113,7 +190,11 @@ export class ExecutableRandom extends RandomBase {
  * @implements {ExecutableStatement}
  */
 export class ExecutableReadFile extends ReadFileBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  execute(runtime) {
+    const char = runtime.fileReader(this.streamName).next();
+    runtime.addToStorage(this.varName, char);
+  }
 }
 
 /**
@@ -121,7 +202,9 @@ export class ExecutableReadFile extends ReadFileBase {
  * @implements {ExecutableStatement}
  */
 export class ExecutableStartBlock extends StartBlockBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  // eslint-disable-next-line no-unused-vars
+  execute(runtime) {}
 }
 
 /**
@@ -129,7 +212,10 @@ export class ExecutableStartBlock extends StartBlockBase {
  * @implements {ExecutableStatement}
  */
 export class ExecutableValueAssignment extends ValueAssignmentBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  execute(runtime) {
+    runtime.addToStorage(this.varName, this.value);
+  }
 }
 
 /**
@@ -137,7 +223,11 @@ export class ExecutableValueAssignment extends ValueAssignmentBase {
  * @implements {ExecutableStatement}
  */
 export class ExecutableVariableAssignment extends VariableAssignmentBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  execute(runtime) {
+    const value = runtime.getFromStorage(this.readFromVarName);
+    runtime.addToStorage(this.writeToVarName, value);
+  }
 }
 
 /**
@@ -145,10 +235,17 @@ export class ExecutableVariableAssignment extends VariableAssignmentBase {
  * @implements {ExecutableStatement}
  */
 export class ExecutableWriteFile extends WriteFileBase {
-  execute() {}
+  /** @param {import("./runtime").default} runtime */
+  execute(runtime) {
+    // @ts-ignore
+    const char = String.fromCharCode([runtime.getFromStorage(this.varName)]);
+    appendToFile(runtime.workspaceId, this.streamName, char);
+  }
 }
 
-const executableMeaningfulStatements = [
+export const executableMeaningfulStatements = [
+  ExecutableCheckFileEof,
+  ExecutableCheckStdinEof,
   ExecutableCondition,
   ExecutableDecrement,
   ExecutableDeleteFile,
@@ -165,16 +262,3 @@ const executableMeaningfulStatements = [
   ExecutableVariableAssignment,
   ExecutableWriteFile
 ];
-
-/**
- * @param {string} text
- * @returns {string}
- */
-export function execute(text) {
-  return text
-    .split('\n')
-    .map((line) =>
-      getStatement(line, executableMeaningfulStatements, ExecutableComment).highlight()
-    )
-    .join('\n');
-}

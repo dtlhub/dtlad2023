@@ -1,3 +1,52 @@
+<script>
+  import { highlight } from '$lib/amogus_plus_plus/highlightableStatements';
+
+  const examples = [
+    {
+      name: 'File echo',
+      code: `IS input.txt EMPTY RED TELL ME PLS PLS PLS
+GAME output.txt HAS FINISHED
+
+WHILE ITS NOT RED VOTE ME
+BLOCKUS
+	CHAR HAS LEFT THE input.txt
+	CHAR HAS JOINED THE output.txt
+	IS input.txt EMPTY RED TELL ME PLS PLS PLS
+ENDBLOCKUS
+`
+    },
+    {
+      name: 'Generate "digit tower"',
+      code: `GUYS I CAN VOUCH RED IS 1
+GUYS I CAN VOUCH GREEN IS 20
+GUYS I CAN VOUCH NEWLINE IS 10
+
+WHILE ITS NOT GREEN VOTE ME
+BLOCKUS
+	YELLOW IS JUST LIKE RED
+	WHILE ITS NOT YELLOW VOTE ME
+	BLOCKUS
+		IDK WHAT DIGIT IS BUT ITS BETWEEN 48 AND 57
+		DIGIT CAN VOUCH GO AND TELL THEM COME ON
+		YELLOW GOES DOWN
+	ENDBLOCKUS
+
+	NEWLINE CAN VOUCH GO AND TELL THEM COME ON
+		
+	IDK WHAT BLUE IS BUT ITS BETWEEN 1 AND 3
+	WHILE ITS NOT BLUE VOTE ME
+	BLOCKUS
+		RED GOES UP
+		BLUE GOES DOWN
+		IF ITS NOT GREEN THEN VOTE ME
+			GREEN GOES DOWN
+	ENDBLOCKUS
+ENDBLOCKUS
+`
+    }
+  ];
+</script>
+
 <h1>Documentation</h1>
 
 <h2>About</h2>
@@ -31,16 +80,14 @@
   <li>
     Variables are integers that can contain any value between <span class="value">0</span> and
     <span class="value">255</span>. If any operation overflows the variable, it wraps around.
-    There's also a special case, in which <span class="value">-1</span> can be assigned to variable,
-    when reading from stream or stdin that reached EOF.
   </li>
   <li>
     Streams are strings, which represent filenames in local directory. Filenames must be matchable
     by <span class="stream">[A-Za-z0-9._-]+</span>. If stream has not been open yet, reading from it
-    opens it and returns first byte of file (or <span class="value">-1</span>, if file is empty). If
-    stream has already been open, reading from it just returns first unread byte from the file.
-    Writing to a non-existing file will create that file on the filesystem. Simultaneuos reading and
-    writing to the same file is prohibited.
+    opens it and returns first byte of file (or throws exception, if file is empty). If stream has
+    already been open, reading from it just returns first unread byte from the file. Writing to a
+    non-existing file will create that file on the filesystem. Simultaneuos reading and writing to
+    the same file is prohibited.
   </li>
 </ul>
 
@@ -150,8 +197,16 @@
       <td
         >Recieve a character as user input from stdin, and save it's ascii value at <span
           class="var">[PLAYER]</span
-        >. If stdin is empty, sets <span class="var">[PLAYER]</span> to
-        <span class="value">-1</span></td
+        >. If stdin is empty, throws exception</td
+      >
+    </tr>
+
+    <!-- [PLAYER] HAVE YOU SEEN THIS -->
+    <tr>
+      <td class="code"><span class="var">[PLAYER]</span> HAVE YOU SEEN THIS</td>
+      <td
+        >If stdin reached EOF, sets <span class="var">[PLAYER]</span> to
+        <span class="value">0</span>, otherwise to <span class="value">1</span></td
       >
     </tr>
 
@@ -171,8 +226,20 @@
       >
       <td
         >Read next character from file <span class="stream">[LOBBY]</span> and save it's ASCII value
-        into <span class="var">[PLAYER]</span>. If reached EOF, writes
-        <span class="value">-1</span></td
+        into <span class="var">[PLAYER]</span>. If reached EOF, throws exception</td
+      >
+    </tr>
+
+    <!-- IS [LOBBY] EMPTY [PLAYER] TELL ME PLS PLS PLS -->
+    <tr>
+      <td class="code"
+        >IS <span class="stream">[LOBBY]</span> EMPTY <span class="var">[PLAYER]</span> TELL ME PLS PLS
+        PLS</td
+      >
+      <td
+        >If <span class="stream">[LOBBY]</span> reached EOF, sets <span class="var">[PLAYER]</span>
+        to
+        <span class="value">0</span>, otherwise to <span class="value">1</span></td
       >
     </tr>
 
@@ -211,6 +278,13 @@
 </table>
 
 <h2>Examples</h2>
+
+<section id="examples">
+  {#each examples as example}
+    <h3>{example.name}</h3>
+    <pre>{@html highlight(example.code)}</pre>
+  {/each}
+</section>
 
 <style lang="scss">
   * {
@@ -279,5 +353,22 @@
 
   .stream {
     color: var(--pink);
+  }
+
+  #examples {
+    padding-left: 1em;
+
+    h3 {
+      font-size: 1.2em;
+      margin-bottom: 0.3em;
+      margin-top: 1em;
+    }
+
+    pre {
+      padding: 0.4em;
+      background-color: var(--surface);
+      border: 2px solid var(--white);
+      border-radius: 0.4em;
+    }
   }
 </style>

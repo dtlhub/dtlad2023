@@ -34,5 +34,6 @@ export class ExecutableStatement extends StatementBase {
   /** @param {string} line */
   constructor(line) {}
 
-  execute() {}
+  /** @param {import("../server/amogus_plus_plus/runtime").default} runtime */
+  execute(runtime) {}
 }

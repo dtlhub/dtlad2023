@@ -9,9 +9,12 @@ export const handle = async ({ event, resolve }) => {
       pocketbase.authStore.clear();
     }
   }
+  const user = pocketbase.authStore.model;
 
   event.locals.pocketbase = pocketbase;
-  event.locals.user = structuredClone(pocketbase.authStore.model);
+  if (user) {
+    event.locals.user = user;
+  }
 
   const response = await resolve(event);
 

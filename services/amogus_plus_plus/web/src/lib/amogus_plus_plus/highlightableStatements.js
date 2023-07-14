@@ -2,6 +2,8 @@
 
 import { getStatement } from './common';
 import {
+  CheckFileEofBase,
+  CheckStdinEofBase,
   CommentBase,
   ConditionBase,
   DecrementBase,
@@ -19,6 +21,32 @@ import {
   VariableAssignmentBase,
   WriteFileBase
 } from './statementsBases';
+
+/**
+ * @class
+ * @implements {HighlightableStatement}
+ */
+export class HighlightableCheckFileEof extends CheckFileEofBase {
+  highlight() {
+    return (
+      this.whitespacePrefix +
+      `<span style="color: var(--white)">IS <span style="color: var(--pink)">${this.streamName}</span> EMPTY <span style="color: var(--cyan)">${this.varName}</span> TELL ME PLS PLS PLS</span>`
+    );
+  }
+}
+
+/**
+ * @class
+ * @implements {HighlightableStatement}
+ */
+export class HighlightableCheckStdinEof extends CheckStdinEofBase {
+  highlight() {
+    return (
+      this.whitespacePrefix +
+      `<span style="color: var(--white)"><span style="color: var(--cyan)">${this.varName}</span> HAVE YOU SEEN THIS</span>`
+    );
+  }
+}
 
 /**
  * @class
@@ -80,7 +108,7 @@ export class HighlightableDeleteFile extends DeleteFileBase {
  */
 export class HighlightableEndBlock extends EndBlockBase {
   highlight() {
-    return '<span style="color: var(--white)">ENDBLOCKUS</span>';
+    return this.whitespacePrefix + '<span style="color: var(--white)">ENDBLOCKUS</span>';
   }
 }
 
@@ -146,7 +174,7 @@ export class HighlightablePrint extends PrintBase {
   highlight() {
     return (
       this.whitespacePrefix +
-      `<span style="color: var(--white)"><span style="color: var(--cyan)">${this.varName}</span> CAN VOUCH GO ON AND TELL THEM COME ON</span>`
+      `<span style="color: var(--white)"><span style="color: var(--cyan)">${this.varName}</span> CAN VOUCH GO AND TELL THEM COME ON</span>`
     );
   }
 }
@@ -183,7 +211,7 @@ export class HighlightableReadFile extends ReadFileBase {
  */
 export class HighlightableStartBlock extends StartBlockBase {
   highlight() {
-    return '<span style="color: var(--white)">BLOCKUS</span>';
+    return this.whitespacePrefix + '<span style="color: var(--white)">BLOCKUS</span>';
   }
 }
 
@@ -227,6 +255,8 @@ export class HighlightableWriteFile extends WriteFileBase {
 }
 
 const highlightableMeaningfulStatements = [
+  HighlightableCheckFileEof,
+  HighlightableCheckStdinEof,
   HighlightableCondition,
   HighlightableDecrement,
   HighlightableDeleteFile,
@@ -245,11 +275,11 @@ const highlightableMeaningfulStatements = [
 ];
 
 /**
- * @param {string} text
+ * @param {string} code
  * @returns {string}
  */
-export function highlight(text) {
-  return text
+export function highlight(code) {
+  return code
     .split('\n')
     .map((line) =>
       getStatement(line, highlightableMeaningfulStatements, HighlightableComment).highlight()

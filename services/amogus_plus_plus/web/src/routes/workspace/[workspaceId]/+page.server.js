@@ -1,6 +1,6 @@
 import { mustBeLoggedIn, mustOwnWorkspace } from '$lib/auth/guards.js';
 import { error } from '@sveltejs/kit';
-import { addFile, workspaceFiles, removeFile, saveFile } from '$lib/server/workspaceUtils';
+import { addFile, workspaceFiles, removeFile } from '$lib/server/workspaceUtils';
 
 export async function load({ locals, params }) {
   mustBeLoggedIn(locals);
@@ -29,9 +29,6 @@ export const actions = {
     }
 
     return workspaceFiles(params.workspaceId);
-  },
-
-  saveFile: async ({ locals, request, params }) => {
   },
 
   deleteFile: async ({ locals, request, params }) => {

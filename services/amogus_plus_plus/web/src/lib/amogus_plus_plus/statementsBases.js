@@ -37,6 +37,39 @@ class StatementMixin {
 }
 
 /**
+ * @param {string} strNumber
+ * @returns {Number}
+ */
+function StringToInt(strNumber) {
+  return JSON.parse(strNumber);
+}
+
+/**
+ * @class
+ * @implements {StatementBase}
+ */
+export class CheckFileEofBase extends StatementMixin {
+  /** @param {string} line */
+  constructor(line) {
+    super(/IS ([a-zA-Z0-9.-_]+) EMPTY ([a-zA-Z_]+[a-zA-Z0-9_]*) TELL ME PLS PLS PLS/, line);
+    this.streamName = this.parts[1];
+    this.varName = this.parts[2];
+  }
+}
+
+/**
+ * @class
+ * @implements {StatementBase}
+ */
+export class CheckStdinEofBase extends StatementMixin {
+  /** @param {string} line */
+  constructor(line) {
+    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) HAVE YOU SEEN THIS/, line);
+    this.varName = this.parts[1];
+  }
+}
+
+/**
  * @class
  * @implements {StatementBase}
  */
@@ -75,7 +108,7 @@ export class DecrementBase extends StatementMixin {
 
     if (this.parts[2]) {
       this.byPresent = true;
-      this.value = Number.parseInt(this.parts[2].slice(3));
+      this.value = StringToInt(this.parts[2].slice(3));
     } else {
       this.byPresent = false;
       this.value = 1;
@@ -143,7 +176,7 @@ export class IncrementBase extends StatementMixin {
 
     if (this.parts[2]) {
       this.byPresent = true;
-      this.value = Number.parseInt(this.parts[2].slice(3));
+      this.value = StringToInt(this.parts[2].slice(3));
     } else {
       this.byPresent = false;
       this.value = 1;
@@ -208,8 +241,8 @@ export class RandomBase extends StatementMixin {
   constructor(line) {
     super(/IDK WHAT ([a-zA-Z_]+[a-zA-Z0-9_]*) IS BUT ITS BETWEEN ([0-9]+) AND ([0-9]+)/, line);
     this.varName = this.parts[1];
-    this.min = Number.parseInt(this.parts[2]);
-    this.max = Number.parseInt(this.parts[3]);
+    this.min = StringToInt(this.parts[2]);
+    this.max = StringToInt(this.parts[3]);
   }
 }
 
@@ -256,7 +289,7 @@ export class ValueAssignmentBase extends StatementMixin {
   constructor(line) {
     super(/GUYS I CAN VOUCH ([a-zA-Z_]+[a-zA-Z0-9_]*) IS ([0-9]+)/, line);
     this.varName = this.parts[1];
-    this.value = this.parts[2];
+    this.value = StringToInt(this.parts[2]);
   }
 }
 

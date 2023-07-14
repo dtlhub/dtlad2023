@@ -33,6 +33,9 @@ export function workspaceFiles(workspaceId) {
  * @param {string} filename
  */
 function getFilePath(workspaceId, filename) {
+  if (filename.includes('..')) {
+    throw Error('Bad filename');
+  }
   const workspaceDir = getWorkspaceDir(workspaceId);
   return path.join(workspaceDir, filename);
 }
@@ -76,4 +79,14 @@ export function fileContents(workspaceId, filename) {
 export function saveFile(workspaceId, filename, content) {
   const filePath = getFilePath(workspaceId, filename);
   fs.writeFileSync(filePath, content);
+}
+
+/**
+ * @param {string} workspaceId
+ * @param {string} filename
+ * @param {string} char
+ */
+export function appendToFile(workspaceId, filename, char) {
+  const filePath = getFilePath(workspaceId, filename);
+  fs.appendFileSync(filePath, char);
 }
