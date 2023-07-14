@@ -9,10 +9,94 @@ from checklib import *
 from amogus_plus_plus_lib import *
 
 
-FILENAME_ALPHA = ascii_letters + digits + '_-'
+def generate_var_name() -> str:
+    return choice(ascii_letters + '_') + rnd_string(12, alphabet=ascii_letters + digits + '_')
+
+
+def generate_file_name(ext='.txt') -> str:
+    filename = rnd_string(12, alphabet=ascii_letters + digits + '_.-')
+    while '..' in filename:
+        filename = filename.replace('..', '.')
+    return filename.strip('.') + ext
+
 
 # Test all statements from the program
 INTEGRAL_TEST = '''
+GAME {file_to_delete} HAS FINISHED
+
+GUYS I CAN VOUCH {var_a} IS 2
+GUYS I CAN VOUCH {var_b} IS 5
+GUYS I CAN VOUCH {var_c} IS 10
+
+WHILE ITS NOT {var_b} VOTE ME
+BLOCKUS
+	{var_e} IS JUST LIKE {var_a}
+	WHILE ITS NOT {var_e} VOTE ME
+	BLOCKUS
+		IDK WHAT {var_d} IS BUT ITS BETWEEN 48 AND 57
+		{var_d} CAN VOUCH GO AND TELL THEM COME ON
+		{var_e} GOES DOWN
+	ENDBLOCKUS
+
+	{var_c} CAN VOUCH GO AND TELL THEM COME ON
+		
+    GUYS I CAN VOUCH {var_f} IS 2
+	WHILE ITS NOT {var_f} VOTE ME
+	BLOCKUS
+		{var_a} GOES UP
+		{var_f} GOES DOWN
+		IF ITS NOT {var_b} THEN VOTE ME
+			{var_b} GOES DOWN
+	ENDBLOCKUS
+ENDBLOCKUS
+
+GUYS I CAN VOUCH {var_a} IS 48
+IDK WHAT {var_b} IS BUT ITS BETWEEN 0 AND 9
+WHILE ITS NOT {var_b} VOTE ME
+BLOCKUS
+    {var_a} GOES UP
+    {var_b} GOES DOWN
+ENDBLOCKUS
+{var_a} CAN VOUCH GO AND TELL THEM COME ON
+{var_c} CAN VOUCH GO AND TELL THEM COME ON
+
+{var_a} HAVE YOU SEEN THIS
+WHILE ITS NOT {var_a} VOTE ME
+BLOCKUS
+    {var_b} WHO ARE YOU
+    {var_b} HAS JOINED THE {output_file}
+    {var_a} HAVE YOU SEEN THIS
+ENDBLOCKUS
+
+IS {input_file} EMPTY {var_c} TELL ME PLS PLS PLS
+WHILE ITS NOT {var_c} VOTE ME
+BLOCKUS
+    {var_d} HAS LEFT THE {input_file}
+    {var_d} GOES UP BY 10
+    {var_d} GOES DOWN BY 123
+    {var_d} GOES UP BY 112
+    {var_d} GOES DOWN BY 255
+    {var_d} CAN VOUCH GO AND TELL THEM COME ON
+    IS {input_file} EMPTY {var_c} TELL ME PLS PLS PLS
+ENDBLOCKUS
+
+GUYS I CAN VOUCH {var_e} IS 0
+GUYS I CAN VOUCH {var_f} IS 1
+WHILE ITS NOT {var_f} VOTE ME
+BLOCKUS
+    {var_f} GOES UP
+    {var_f} GOES DOWN BY 10
+
+    GUYS I CAN VOUCH {var_g} IS 1
+    IF ITS NOT {var_f} THEN VOTE ME
+    GUYS I CAN VOUCH {var_g} IS 0
+
+    IF ITS NOT {var_g} THEN VOTE ME
+    GUYS I CAN VOUCH {var_e} IS 1
+
+    {var_f} GOES UP BY 10
+    {var_e} WAS THE IMPOSTOR
+ENDBLOCKUS
 '''.strip()
 
 # Ensure we are able to execute 1000 iterations
@@ -85,7 +169,7 @@ class Checker(BaseChecker):
         workspace_name = rnd_string(20)
         workspace_id = self.mch.create_workspace(session, workspace_name, None)
 
-        filename = f'{rnd_string(8, alphabet=FILENAME_ALPHA)}.txt'
+        filename = generate_file_name('.txt')
 
         # Create file
         content = rnd_string(300, alphabet=printable)
@@ -111,7 +195,7 @@ class Checker(BaseChecker):
         # Create many files
         expected_files = {"main.sus"}
         for _ in range(3):
-            filename = f'{rnd_string(8, alphabet=FILENAME_ALPHA)}.txt'
+            filename = generate_file_name('.txt')
             self.mch.save_file_to_workspace(session, workspace_id, filename, "")
             expected_files.add(filename)
         created_files = self.mch.list_workspace_files(session, workspace_id)
@@ -121,12 +205,48 @@ class Checker(BaseChecker):
         workspace_name = rnd_string(20)
         workspace_id = self.mch.create_workspace(session, workspace_name, None)
 
-        input_file = f'{rnd_string(8, alphabet=FILENAME_ALPHA)}.txt'
-        input_file_content = rnd_string(300, alphabet=printable)
+        input_file = generate_file_name('.in')
+        input_file_content = rnd_string(10, alphabet=printable)
         self.mch.save_file_to_workspace(session, workspace_id, input_file, input_file_content)
 
-        file_to_delete = f'{rnd_string(8, alphabet=FILENAME_ALPHA)}.tmp'
-        self.mch.save_file_to_workspace(session, workspace_id, file_to_delete, '')
+        file_to_delete = generate_file_name('.tmp')
+        self.mch.save_file_to_workspace(session, workspace_id, file_to_delete, ':D')
+
+        output_file = generate_file_name('.out')
+
+        args = {f"var_{letter}": generate_var_name() for letter in "abcdefg"}
+        args['input_file'] = input_file
+        args['output_file'] = output_file
+        args['file_to_delete'] = file_to_delete
+        script = INTEGRAL_TEST.format(**args)
+
+        stdin = rnd_string(10, ascii_letters)
+        self.mch.save_file_to_workspace(session, workspace_id, 'main.sus', script)
+
+        files, stdout = self.mch.execute_file_from_workspace(
+            session, workspace_id, 'main.sus', stdin
+        )
+        self.assert_eq(
+            files, {"main.sus", input_file, output_file}, "Wrong script execution result"
+        )
+
+        stdout_parts = stdout.split('\n')
+        self.assert_eq(len(stdout_parts[0]), 2, "Wrong script execution result")
+        self.assert_eq(len(stdout_parts[1]), 4, "Wrong script execution result")
+        self.assert_eq(len(stdout_parts[2]), 6, "Wrong script execution result")
+        self.assert_eq(
+            all(x.isdigit() for x in ''.join(stdout_parts[:3])),
+            True,
+            "Wrong script execution result",
+        )
+        self.assert_eq(len(stdout_parts[3]), 1, "Wrong script execution result")
+        self.assert_in(stdout_parts[3], digits, "Wrong script execution result")
+        self.assert_eq(
+            '\n'.join(stdout_parts[4:]), input_file_content, "Wrong script execution result"
+        )
+
+        output_file_content = self.mch.get_file_from_workspace(session, workspace_id, output_file)
+        self.assert_eq(stdin, output_file_content, "Wrong script execution result")
 
     def check_script_iterations(self, session: requests.Session):
         workspace_name = rnd_string(20)

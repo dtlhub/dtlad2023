@@ -4,7 +4,8 @@
   const examples = [
     {
       name: 'File echo',
-      code: `IS input.txt EMPTY RED TELL ME PLS PLS PLS
+      code: `
+IS input.txt EMPTY RED TELL ME PLS PLS PLS
 GAME output.txt HAS FINISHED
 
 WHILE ITS NOT RED VOTE ME
@@ -13,11 +14,12 @@ BLOCKUS
 	CHAR HAS JOINED THE output.txt
 	IS input.txt EMPTY RED TELL ME PLS PLS PLS
 ENDBLOCKUS
-`
+`.trim()
     },
     {
       name: 'Generate "digit tower"',
-      code: `GUYS I CAN VOUCH RED IS 1
+      code: `
+GUYS I CAN VOUCH RED IS 1
 GUYS I CAN VOUCH GREEN IS 20
 GUYS I CAN VOUCH NEWLINE IS 10
 
@@ -42,7 +44,7 @@ BLOCKUS
 			GREEN GOES DOWN
 	ENDBLOCKUS
 ENDBLOCKUS
-`
+`.trim()
     }
   ];
 </script>

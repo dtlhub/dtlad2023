@@ -51,7 +51,7 @@ function StringToInt(strNumber) {
 export class CheckFileEofBase extends StatementMixin {
   /** @param {string} line */
   constructor(line) {
-    super(/IS ([a-zA-Z0-9.-_]+) EMPTY ([a-zA-Z_]+[a-zA-Z0-9_]*) TELL ME PLS PLS PLS/, line);
+    super(/IS ([a-zA-Z0-9.\-_]+) EMPTY ([a-zA-Z_]+[a-zA-Z0-9_]*) TELL ME PLS PLS PLS/, line);
     this.streamName = this.parts[1];
     this.varName = this.parts[2];
   }
@@ -125,7 +125,7 @@ export class DeleteFileBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super(/GAME ([a-zA-Z0-9.-_]+) HAS FINISHED/, line);
+    super(/GAME ([a-zA-Z0-9.\-_]+) HAS FINISHED/, line);
     this.streamName = this.parts[1];
   }
 }
@@ -255,7 +255,7 @@ export class ReadFileBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) HAS LEFT THE ([a-zA-Z0-9.-_]+)/, line);
+    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) HAS LEFT THE ([a-zA-Z0-9.\-_]+)/, line);
     this.varName = this.parts[1];
     this.streamName = this.parts[2];
   }
@@ -317,7 +317,7 @@ export class WriteFileBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) HAS JOINED THE ([a-zA-Z0-9.-_]+)/, line);
+    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) HAS JOINED THE ([a-zA-Z0-9.\-_]+)/, line);
     this.varName = this.parts[1];
     this.streamName = this.parts[2];
   }
