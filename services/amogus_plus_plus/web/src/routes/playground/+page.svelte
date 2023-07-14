@@ -10,9 +10,9 @@
 <ul>
   {#each data.workspaces as workspace}
     <li>
-      <a href="/workspace/{workspace.id}">{workspace.name}</a>
+      <a href="/workspace/{workspace.id}" title={workspace.description}>{workspace.name}</a>
       <form method="POST" action="?/deleteWorkspace" use:enhance>
-        <input hidden name="workspaceId" value={workspace.id} />
+        <input hidden name="id" value={workspace.id} />
         <button>DELETE</button>
       </form>
     </li>
@@ -20,14 +20,15 @@
 
   <form method="POST" action="?/createWorkspace" use:enhance>
     <input
-      name="workspaceName"
+      name="name"
       type="text"
       size="30"
       maxlength="30"
       placeholder="NEW WORKSPACE NAME"
       required
     />
-    <button>CREATE NEW</button>
+    <textarea name="description" placeholder="NEW WORKSPACE DESCRIPTION" rows="3" />
+    <button>CREATE NEW WORKSPACE</button>
   </form>
 </ul>
 
@@ -71,11 +72,13 @@
 
     & > form {
       display: flex;
+      flex-direction: column;
       justify-content: space-between;
       align-items: stretch;
-      gap: 1em;
+      gap: 0.3em;
       margin-top: 1em;
 
+      textarea,
       input {
         background-color: transparent;
         outline: none;

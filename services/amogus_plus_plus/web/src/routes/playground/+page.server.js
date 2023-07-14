@@ -18,7 +18,11 @@ export async function load({ locals }) {
 
   return {
     workspaces: workspaces.map((pbWorkspace) => {
-      return { id: pbWorkspace.id, name: pbWorkspace.name };
+      return {
+        id: pbWorkspace.id,
+        name: pbWorkspace.name,
+        description: pbWorkspace.description
+      };
     })
   };
 }
@@ -27,15 +31,16 @@ export const actions = {
   createWorkspace: async ({ locals, request }) => {
     mustBeLoggedIn(locals);
 
-    /** @type {{workspaceName: string}} */
+    /** @type {{name: string, description: string | null}} */
     // @ts-ignore
     const data = Object.fromEntries(await request.formData());
 
     let workspace = null;
     try {
       workspace = await locals.pocketbase.collection('workspaces').create({
-        name: data.workspaceName,
-        owner: locals.user?.id
+        name: data.name,
+        owner: locals.user?.id,
+        description: data.description
       });
     } catch (err) {
       tryHandlePocketbaseError(err);
@@ -47,18 +52,18 @@ export const actions = {
   deleteWorkspace: async ({ locals, request }) => {
     mustBeLoggedIn(locals);
 
-    /** @type {{workspaceId: string}} */
+    /** @type {{id: string}} */
     // @ts-ignore
     const data = Object.fromEntries(await request.formData());
 
     try {
-      await locals.pocketbase.collection('workspaces').delete(data.workspaceId);
+      await locals.pocketbase.collection('workspaces').delete(data.id);
     } catch (err) {
       tryHandlePocketbaseError(err);
     }
 
     try {
-      deleteWorkspace(data.workspaceId);
+      deleteWorkspace(data.id);
     } catch (err) {
       throw error(500, 'Unable to delete workspace');
     }
