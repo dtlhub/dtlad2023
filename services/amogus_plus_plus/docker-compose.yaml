@@ -1,10 +1,34 @@
 services:
+  nginx:
+    image: nginx:stable-alpine3.17-slim
+    ports:
+      - 1984:80
+    restart: on-failure
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d:ro
+    depends_on:
+      - web
+      - pocketbase
+
+  web:
+    build:
+      context: web/
+    # environment:
+      # - LOCAL_POCKETBASE_ADDRESS = "http://pocketbase:8090"
+      # - WORKSPACE_DATA_DIR = "/data"
+    expose:
+      - 3000
+    volumes:
+      - ./data:/data
+    depends_on:
+      - pocketbase
+
   pocketbase:
     image: ghcr.io/muchobien/pocketbase:0.16.6
     container_name: pocketbase
     restart: unless-stopped
-    ports:
-      - 8090:8090
+    expose:
+      - 8090
     volumes:
       - ./database/pb_data:/pb_data
       - ./database/pb_public:/pb_public

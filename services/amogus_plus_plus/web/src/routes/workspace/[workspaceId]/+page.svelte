@@ -40,69 +40,62 @@
   /** @type {string | null} */
   let activeFile = null;
 
-  function updateActiveFileContents() {
+  async function updateActiveFileContents() {
     if (activeFile === null) {
       editorContent = '';
       return;
     }
 
-    fetch(`/workspace/${data.id}/${activeFile}`)
-      .then((response) => response.json())
-      .then((jsonData) => (editorContent = jsonData));
+    const response = await fetch(`/workspace/${data.id}/${activeFile}`);
+    editorContent = await response.json();
   }
 
-  function saveActiveFile() {
+  async function saveActiveFile() {
     if (activeFile === null) {
       return;
     }
 
-    fetch(`/workspace/${data.id}/${activeFile}`, {
+    await fetch(`/workspace/${data.id}/${activeFile}`, {
       method: 'PUT',
       body: JSON.stringify({ filename: activeFile, content: editorContent })
     });
   }
 
-  function executeActiveFile() {
+  async function executeActiveFile() {
     if (activeFile === null) {
       return;
     }
 
-    saveActiveFile();
+    await saveActiveFile();
 
-    fetch(`/workspace/${data.id}/${activeFile}`, {
+    const response = await fetch(`/workspace/${data.id}/${activeFile}`, {
       method: 'POST',
       body: JSON.stringify({ filename: activeFile, stdin })
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          return { files: data.files, stdout };
-        }
-      })
-      .then((jsonData) => {
-        if (jsonData.errorMsg) {
-          alert(jsonData.errorMsg);
-        } else {
-          data.files = jsonData.files;
-          stdout = jsonData.stdout;
-        }
-      });
+    });
+
+    if (response.ok) {
+      const jsonData = await response.json();
+      data.files = jsonData.files;
+      stdout = jsonData.stdout;
+    } else {
+      const jsonData = await response.json();
+      alert(jsonData.errorMsg);
+    }
   }
 
   /** @param {Event} event */
-  function onFileClick(event) {
+  async function onFileClick(event) {
     // @ts-ignore
     const newActiveFile = event.target.innerText;
-    saveActiveFile();
+    await saveActiveFile();
     activeFile = newActiveFile;
-    updateActiveFileContents();
+    await updateActiveFileContents();
   }
 
-  onMount(() => {
+  onMount(async () => {
     if (data.files.length !== 0) {
       activeFile = data.files[0];
-      updateActiveFileContents();
+      await updateActiveFileContents();
     }
   });
 </script>

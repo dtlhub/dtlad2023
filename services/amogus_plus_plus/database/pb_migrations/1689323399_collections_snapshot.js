@@ -78,11 +78,11 @@ migrate((db) => {
       "indexes": [
         "CREATE UNIQUE INDEX `idx_RpTwAg7` ON `workspaces` (\n  `name`,\n  `owner`\n)"
       ],
-      "listRule": "@request.auth.id = @request.data.owner.id",
-      "viewRule": "@request.auth.id = @request.data.owner.id",
-      "createRule": "@request.auth.id = @request.data.owner.id",
+      "listRule": "@request.auth.id = owner.id",
+      "viewRule": "@request.auth.id = owner.id",
+      "createRule": "@request.auth.id = owner.id",
       "updateRule": null,
-      "deleteRule": "@request.auth.id = @request.data.owner.id",
+      "deleteRule": "@request.auth.id = owner.id",
       "options": {}
     }
   ];
