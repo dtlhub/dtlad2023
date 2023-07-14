@@ -73,13 +73,12 @@
       body: JSON.stringify({ filename: activeFile, stdin })
     });
 
-    if (response.ok) {
-      const jsonData = await response.json();
+    const jsonData = await response.json();
+    if (jsonData.errorMsg) {
+      alert(jsonData.errorMsg);
+    } else {
       data.files = jsonData.files;
       stdout = jsonData.stdout;
-    } else {
-      const jsonData = await response.json();
-      alert(jsonData.errorMsg);
     }
   }
 
@@ -124,8 +123,13 @@
             action="?/deleteFile"
             use:enhance={() => {
               return async ({ result }) => {
-                // @ts-ignore
-                data.files = result.data;
+                if (result.type === 'success') {
+                  data.files = result.data;
+                  if (!data.files.includes(activeFile)) {
+                    activeFile = null;
+                    updateActiveFileContents();
+                  }
+                }
                 await applyAction(result);
               };
             }}
@@ -142,8 +146,9 @@
       action="?/createFile"
       use:enhance={() => {
         return async ({ result }) => {
-          // @ts-ignore
-          data.files = result.data;
+          if (result.type === 'success') {
+            data.files = result.data;
+          }
           await applyAction(result);
         };
       }}
