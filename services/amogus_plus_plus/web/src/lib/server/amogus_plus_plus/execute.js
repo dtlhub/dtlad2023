@@ -58,7 +58,19 @@ export function execute(code, stdin, workspaceId) {
     }
   };
 
-  const handleLoop = handleCondition;
+  const handleLoop = () => {
+    if (nextLine().is_block_start()) {
+      handleCondition();
+    } else {
+      // @ts-ignore
+      if (currentLine.execute(runtime)) {
+        nextLine().execute(runtime);
+        index -= 1;
+      } else {
+        index += 1;
+      }
+    }
+  };
 
   const handleBlockStart = () => {
     runtime.jumpStack.push(index);
@@ -93,7 +105,7 @@ export function execute(code, stdin, workspaceId) {
       ++index;
     }
 
-    if (iterations === MAX_ITERATIONS) {
+    if (iterations >= MAX_ITERATIONS) {
       throw new Error('Reached iteration limit');
     }
   } catch (err) {

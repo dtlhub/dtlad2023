@@ -42,7 +42,7 @@ export const actions = {
     try {
       removeFile(params.workspaceId, data.filename);
     } catch {
-      throw error(500, 'Unable to create file');
+      throw error(500, 'Unable to delete file');
     }
 
     return workspaceFiles(params.workspaceId);
