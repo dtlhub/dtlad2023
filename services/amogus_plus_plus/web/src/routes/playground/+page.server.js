@@ -10,6 +10,7 @@ export async function load({ locals }) {
   let workspaces = [];
   try {
     workspaces = await locals.pocketbase.collection('workspaces').getFullList({
+      filter: `owner = '${locals.user.id}'`,
       sort: 'created'
     });
   } catch (err) {

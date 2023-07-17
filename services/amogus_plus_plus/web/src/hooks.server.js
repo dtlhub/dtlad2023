@@ -12,9 +12,7 @@ export const handle = async ({ event, resolve }) => {
   const user = pocketbase.authStore.model;
 
   event.locals.pocketbase = pocketbase;
-  if (user) {
-    event.locals.user = user;
-  }
+  event.locals.user = user;
 
   const response = await resolve(event);
 

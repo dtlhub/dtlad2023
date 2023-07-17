@@ -1,34 +1,9 @@
 migrate((db) => {
   const snapshot = [
     {
-      "id": "_pb_users_auth_",
-      "created": "2023-06-29 10:16:32.961Z",
-      "updated": "2023-06-29 10:22:11.507Z",
-      "name": "users",
-      "type": "auth",
-      "system": false,
-      "schema": [],
-      "indexes": [],
-      "listRule": "id = @request.auth.id",
-      "viewRule": "id = @request.auth.id",
-      "createRule": "",
-      "updateRule": "id = @request.auth.id",
-      "deleteRule": "id = @request.auth.id",
-      "options": {
-        "allowEmailAuth": false,
-        "allowOAuth2Auth": false,
-        "allowUsernameAuth": true,
-        "exceptEmailDomains": null,
-        "manageRule": null,
-        "minPasswordLength": 5,
-        "onlyEmailDomains": null,
-        "requireEmail": false
-      }
-    },
-    {
       "id": "5b62gswbvx6alk6",
       "created": "2023-07-10 06:39:35.697Z",
-      "updated": "2023-07-14 08:16:36.380Z",
+      "updated": "2023-07-17 14:05:09.813Z",
       "name": "workspaces",
       "type": "base",
       "system": false,
@@ -51,7 +26,7 @@ migrate((db) => {
           "id": "flunqi9k",
           "name": "owner",
           "type": "relation",
-          "required": false,
+          "required": true,
           "unique": false,
           "options": {
             "collectionId": "_pb_users_auth_",
@@ -63,7 +38,7 @@ migrate((db) => {
         },
         {
           "system": false,
-          "id": "or8ql4jj",
+          "id": "gu5orpnc",
           "name": "description",
           "type": "text",
           "required": false,
@@ -78,12 +53,37 @@ migrate((db) => {
       "indexes": [
         "CREATE UNIQUE INDEX `idx_RpTwAg7` ON `workspaces` (\n  `name`,\n  `owner`\n)"
       ],
-      "listRule": "@request.auth.id = owner.id",
-      "viewRule": "@request.auth.id = owner.id",
-      "createRule": "@request.auth.id = owner.id",
+      "listRule": "@request.auth.id != ''",
+      "viewRule": "@request.auth.id != ''",
+      "createRule": "@request.auth.id != ''",
       "updateRule": null,
-      "deleteRule": "@request.auth.id = owner.id",
+      "deleteRule": "@request.auth.id != ''",
       "options": {}
+    },
+    {
+      "id": "_pb_users_auth_",
+      "created": "2023-07-14 09:55:46.665Z",
+      "updated": "2023-07-14 09:55:46.674Z",
+      "name": "users",
+      "type": "auth",
+      "system": false,
+      "schema": [],
+      "indexes": [],
+      "listRule": "id = @request.auth.id",
+      "viewRule": "id = @request.auth.id",
+      "createRule": "",
+      "updateRule": "id = @request.auth.id",
+      "deleteRule": "id = @request.auth.id",
+      "options": {
+        "allowEmailAuth": true,
+        "allowOAuth2Auth": false,
+        "allowUsernameAuth": true,
+        "exceptEmailDomains": null,
+        "manageRule": null,
+        "minPasswordLength": 5,
+        "onlyEmailDomains": null,
+        "requireEmail": false
+      }
     }
   ];
 

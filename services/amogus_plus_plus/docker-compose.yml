@@ -22,7 +22,7 @@ services:
     cpus: 1
     build:
       context: web/
-    expose:
+    ports:
       - 3000
     volumes:
       - ./data:/data
@@ -36,8 +36,8 @@ services:
     pids_limit: 256
     mem_limit: 400M
     cpus: 0.5
-    expose:
-      - 8090
+    ports:
+      - 8090:8090
     volumes:
       - ./database/pb_data:/pb_data
       - ./database/pb_public:/pb_public
@@ -47,3 +47,13 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  cleaner:
+    image: c4tbuts4d/dedcleaner:latest
+    restart: unless-stopped
+    volumes:
+      - ./data:/workspaces
+    environment:
+      - DELETE_AFTER=20m
+      - SLEEP=5m
+      - DIRS=/workspaces

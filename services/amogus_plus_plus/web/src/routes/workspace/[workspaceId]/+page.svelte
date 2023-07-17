@@ -57,7 +57,7 @@
 
     await fetch(`/workspace/${data.id}/${activeFile}`, {
       method: 'PUT',
-      body: JSON.stringify({ filename: activeFile, content: editorContent })
+      body: JSON.stringify({ content: editorContent })
     });
   }
 
@@ -70,7 +70,7 @@
 
     const response = await fetch(`/workspace/${data.id}/${activeFile}`, {
       method: 'POST',
-      body: JSON.stringify({ filename: activeFile, stdin })
+      body: JSON.stringify({ stdin })
     });
 
     const jsonData = await response.json();

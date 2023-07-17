@@ -20,6 +20,20 @@ class FileReader {
   }
 }
 
+/**
+ * @param {any} target
+ * @param {any} source
+ */
+function merge(target, source) {
+  for (const key in source) {
+    if (typeof target[key] === 'object' && typeof source[key] === 'object') {
+      merge(target[key], source[key]);
+    } else {
+      target[key] = source[key];
+    }
+  }
+}
+
 export default class Runtime {
   /**
    * @param {string} stdin
@@ -51,7 +65,7 @@ export default class Runtime {
   /** @param {string} key */
   getFromStorage(key) {
     if (!(key in this._storage)) {
-      throw Error(`Variable ${key} is not defined`);
+      throw new Error(`Variable ${key} is not defined`);
     }
     // @ts-ignore
     return this._storage[key];
@@ -62,8 +76,17 @@ export default class Runtime {
    * @param {any} value
    */
   addToStorage(key, value) {
-    // @ts-ignore
-    this._storage[key] = value;
+    if (typeof value !== 'object') {
+      // @ts-ignore
+      this._storage[key] = value;
+    } else {
+      if (!(key in this._storage)) {
+        // @ts-ignore
+        this._storage[key] = new Object();
+      }
+      // @ts-ignore
+      merge(this._storage[key], value);
+    }
   }
 
   get Stdout() {

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import json
 import requests
 from string import printable, ascii_letters, digits
 from random import choice
@@ -258,6 +259,13 @@ class Checker(BaseChecker):
         _, stdout = self.mch.execute_file_from_workspace(session, workspace_id, 'main.sus', stdin)
         self.assert_eq(stdin, stdout, 'Wrong script execution result')
 
+    def check_pocketbase_availability(self, session: requests.Session):
+        username = rnd_username()
+        email = f'{username}@mail.ru'
+        password = rnd_password()
+        self.mch.create_user_pb_api(session, username, email, password)
+        self.mch.login_via_pocketbase_api(session, username, password)
+
     def check(self):
         session = self.get_initialized_session()
         self.check_auth(session)
@@ -267,13 +275,99 @@ class Checker(BaseChecker):
         self.check_script_iterations(session)
         self.cquit(Status.OK)
 
+    def put_email_flag(self, flag: str):
+        session = requests.Session()
+        username = rnd_username()
+        password = rnd_password()
+        self.mch.register(session, username, f'{flag}@flag.com', password)
+        self.cquit(
+            Status.OK,
+            json.dumps({"username": username, "workspace": None}),
+            json.dumps({"password": password}),
+        )
+
+    def put_workspace_description_flag(self, flag: str):
+        session = requests.Session()
+        username = rnd_username()
+        email = f'{username}@mail.ru'
+        password = rnd_password()
+        self.mch.register(session, username, email, password)
+
+        workspace_name = rnd_string(20)
+        workspace_id = self.mch.create_workspace(session, workspace_name, flag)
+        self.cquit(
+            Status.OK,
+            json.dumps({"username": username, "workspace": workspace_id}),
+            json.dumps({"username": username, "password": password, "workspace": workspace_id}),
+        )
+
+    def put_file_content_flag(self, flag: str):
+        session = requests.Session()
+        username = rnd_username()
+        email = f'{username}@mail.ru'
+        password = rnd_password()
+        self.mch.register(session, username, email, password)
+
+        workspace_name = rnd_string(20)
+        workspace_id = self.mch.create_workspace(session, workspace_name, flag)
+        self.mch.save_file_to_workspace(session, workspace_id, "main.sus", flag)
+
+        self.cquit(
+            Status.OK,
+            json.dumps({"username": username, "workspace": workspace_id}),
+            json.dumps({"username": username, "password": password, "workspace": workspace_id}),
+        )
+
     def put(self, flag_id: str, flag: str, vuln: str):
-        # TODO
+        vulns_to_put_funcs = {
+            '1': self.put_email_flag,
+            '2': self.put_workspace_description_flag,
+            '3': self.put_file_content_flag,
+        }
+        vulns_to_put_funcs[vuln](flag)
+
+    def get_email_flag(self, flag_id: str, flag: str):
+        data = json.loads(flag_id)
+        password = data["password"]
+
+        session = requests.Session()
+        self.mch.login_via_pocketbase_api(session, f'{flag}@flag.com', password)
+        self.assert_in(
+            "Authorization", session.headers, "Unable to login via pocketbase api", Status.CORRUPT
+        )
+        self.cquit(Status.OK)
+
+    def get_workspace_description_flag(self, flag_id: str, flag: str):
+        data = json.loads(flag_id)
+        username = data["username"]
+        password = data["password"]
+        workspace_id = data["workspace"]
+
+        session = requests.Session()
+        self.mch.login(session, username, password)
+        description = self.mch.get_workspace_description(session, workspace_id)
+        self.assert_eq(description, flag, "Unable to get workspace description", Status.MUMBLE)
+        self.cquit(Status.OK)
+
+    def get_file_content_flag(self, flag_id: str, flag: str):
+        data = json.loads(flag_id)
+        username = data["username"]
+        password = data["password"]
+        workspace_id = data["workspace"]
+
+        session = requests.Session()
+        self.mch.login(session, username, password)
+        main_sus_data = self.mch.get_file_from_workspace(session, workspace_id, "main.sus")
+        self.assert_in(flag, main_sus_data, "Unable to save file in workspace", Status.MUMBLE)
         self.cquit(Status.OK)
 
     def get(self, flag_id: str, flag: str, vuln: str):
-        # TODO
-        self.cquit(Status.OK)
+        vulns_to_get_funcs = {
+            '1': self.get_email_flag,
+            '2': self.get_workspace_description_flag,
+            '3': self.get_file_content_flag,
+        }
+        vulns_to_get_funcs[vuln](flag_id, flag)
 
 
 if __name__ == '__main__':

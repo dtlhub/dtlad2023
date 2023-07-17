@@ -8,11 +8,11 @@ export async function PUT({ locals, params, request }) {
   mustBeLoggedIn(locals);
   await mustOwnWorkspace(locals, params);
 
-  /** @type {{filename: string, content: string}} */
+  /** @type {{content: string}} */
   const data = await request.json();
 
   try {
-    saveFile(params.workspaceId, data.filename, data.content);
+    saveFile(params.workspaceId, params.filename, data.content);
   } catch {
     throw error(500, 'Unable to save file');
   }
@@ -38,8 +38,8 @@ export async function POST({ locals, params, request }) {
   mustBeLoggedIn(locals);
   await mustOwnWorkspace(locals, params);
 
-  /** @type {{filename: string, stdin: string}} */
-  const { filename, stdin } = await request.json();
+  /** @type {{stdin: string}} */
+  const { stdin } = await request.json();
 
   /** @type {{files: string[], stdout: string, errorMsg: string}} */
   let response = {
@@ -48,12 +48,12 @@ export async function POST({ locals, params, request }) {
     errorMsg: ''
   };
 
-  if (!filename.endsWith('.sus')) {
+  if (!params.filename.endsWith('.sus')) {
     response.errorMsg =
       'AMONGUSISABIGSUSSYBAKAHAHAHAHAHATHISLANGUAGEISREALLYCOOLPLEASEUSEITMYLIFEDEPENDSONITORELSEPLSPLSPLSPLSPLSPLSPLSkahyghdfhm++ script files must end with ".sus"';
   } else {
     try {
-      const code = fileContents(params.workspaceId, filename).toString();
+      const code = fileContents(params.workspaceId, params.filename).toString();
       response.stdout = execute(code, stdin, params.workspaceId);
     } catch (err) {
       if (err instanceof Error) {

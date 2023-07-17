@@ -33,9 +33,6 @@ export function workspaceFiles(workspaceId) {
  * @param {string} filename
  */
 function getFilePath(workspaceId, filename) {
-  if (filename.includes('..')) {
-    throw Error('Bad filename');
-  }
   const workspaceDir = getWorkspaceDir(workspaceId);
   return path.join(workspaceDir, filename);
 }

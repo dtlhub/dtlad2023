@@ -25,18 +25,40 @@ class CheckMachine:
             f'{self.url}/auth/signup',
             data={'username': username, 'email': email, 'password': password},
         )
+        self.c.assert_in("pb_auth", session.cookies.keys(), "Unable to sign up")
         token = session.cookies["pb_auth"]
         session.headers["Cookie"] = f"pb_auth={token}"
-        self.c.assert_in("pb_auth", session.cookies.keys(), "Unable to sign up")
 
-    def login(self, session: requests.Session, username: str, password: str):
+    def create_user_pb_api(
+        self, session: requests.Session, username: str, email: str, password: str
+    ):
+        resp = session.post(
+            f'{self.url}/api/collections/users/records',
+            json={
+                'username': username,
+                'email': email,
+                'password': password,
+                'passwordConfirm': password,
+            },
+        )
+        self.c.assert_eq(resp.status_code, 200, "Unable to create user via pocketbase api")
+
+    def login(self, session: requests.Session, identity: str, password: str):
         session.post(
             f'{self.url}/auth/login',
-            data={'username': username, 'password': password},
+            data={'identity': identity, 'password': password},
         )
+        self.c.assert_in("pb_auth", session.cookies.keys(), "Unable to sign up")
         token = session.cookies["pb_auth"]
         session.headers["Cookie"] = f"pb_auth={token}"
-        self.c.assert_in("pb_auth", session.cookies.keys(), "Unable to sign up")
+
+    def login_via_pocketbase_api(self, session: requests.Session, identity: str, password: str):
+        resp = session.post(
+            f'{self.url}/api/collections/users/auth-with-password',
+            json={'identity': identity, 'password': password},
+        )
+        self.c.assert_eq(resp.status_code, 200, "Unable to login via pocketbase api")
+        session.headers['Authorization'] = resp.json()['token']
 
     def logout(self, session: requests.Session):
         session.cookies.clear()
@@ -81,7 +103,7 @@ class CheckMachine:
             response_status = response.json()["status"]
             self.c.assert_eq(response_status, 302, "Unable to delete workspace")
         except (requests.exceptions.JSONDecodeError, KeyError) as ex:
-            self.c.cquit(Status.MUMBLE, 'Unable to create workspace', str(ex))
+            self.c.cquit(Status.MUMBLE, 'Unable to delete workspace', str(ex))
 
     def list_workspace_files(self, session: requests.Session, workspace_id: str) -> set[str]:
         response = session.get(
@@ -101,7 +123,6 @@ class CheckMachine:
         response = session.put(
             f'{self.url}/workspace/{workspace_id}/{filename}',
             json={
-                'filename': filename,
                 'content': content,
             },
         )
@@ -118,7 +139,7 @@ class CheckMachine:
         try:
             return response.json()
         except (requests.exceptions.JSONDecodeError, KeyError) as ex:
-            self.c.cquit(Status.MUMBLE, 'Unable to save file in workspace', str(ex))
+            self.c.cquit(Status.MUMBLE, 'Unable to get file from workspace', str(ex))
 
     def delete_file_from_workspace(
         self, session: requests.Session, workspace_id: str, filename: str
@@ -139,7 +160,6 @@ class CheckMachine:
         response = session.post(
             f'{self.url}/workspace/{workspace_id}/{filename}',
             json={
-                'filename': filename,
                 'stdin': stdin,
             },
         )

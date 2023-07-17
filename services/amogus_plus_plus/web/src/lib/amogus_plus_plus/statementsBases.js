@@ -12,7 +12,7 @@ class StatementMixin {
 
     const parts = re.exec(line);
     if (parts === null || line.trimStart() != parts[0].trimStart()) {
-      throw Error("Statement didn't match");
+      throw new Error("Statement didn't match");
     }
 
     this.parts = parts;
@@ -51,7 +51,7 @@ function StringToInt(strNumber) {
 export class CheckFileEofBase extends StatementMixin {
   /** @param {string} line */
   constructor(line) {
-    super(/IS ([a-zA-Z0-9.\-_]+) EMPTY ([a-zA-Z_]+[a-zA-Z0-9_]*) TELL ME PLS PLS PLS/, line);
+    super(/IS ([^\s]+) EMPTY ([^\s]+) TELL ME PLS PLS PLS/, line);
     this.streamName = this.parts[1];
     this.varName = this.parts[2];
   }
@@ -64,7 +64,7 @@ export class CheckFileEofBase extends StatementMixin {
 export class CheckStdinEofBase extends StatementMixin {
   /** @param {string} line */
   constructor(line) {
-    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) HAVE YOU SEEN THIS/, line);
+    super(/([^\s]+) HAVE YOU SEEN THIS/, line);
     this.varName = this.parts[1];
   }
 }
@@ -87,7 +87,7 @@ export class CommentBase extends StatementMixin {
 export class ConditionBase extends StatementMixin {
   /** @param {string} line */
   constructor(line) {
-    super(/IF ITS NOT ([a-zA-Z_]+[a-zA-Z0-9_]*) THEN VOTE ME/, line);
+    super(/IF ITS NOT ([^\s]+) THEN VOTE ME/, line);
     this.varName = this.parts[1];
   }
 
@@ -103,7 +103,7 @@ export class ConditionBase extends StatementMixin {
 export class DecrementBase extends StatementMixin {
   /** @param {string} line */
   constructor(line) {
-    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) GOES DOWN( BY [0-9]+)?/, line);
+    super(/([^\s]+) GOES DOWN( BY [^\s]+)?/, line);
     this.varName = this.parts[1];
 
     if (this.parts[2]) {
@@ -125,7 +125,7 @@ export class DeleteFileBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super(/GAME ([a-zA-Z0-9.\-_]+) HAS FINISHED/, line);
+    super(/GAME ([^\s]+) HAS FINISHED/, line);
     this.streamName = this.parts[1];
   }
 }
@@ -156,7 +156,7 @@ export class ExitBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) WAS THE IMPOSTOR/, line);
+    super(/([^\s]+) WAS THE IMPOSTOR/, line);
     this.varName = this.parts[1];
   }
 }
@@ -170,7 +170,7 @@ export class IncrementBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) GOES UP( BY [0-9]+)?/, line);
+    super(/([^\s]+) GOES UP( BY [^\s]+)?/, line);
 
     this.varName = this.parts[1];
 
@@ -193,7 +193,7 @@ export class InputBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) WHO ARE YOU/, line);
+    super(/([^\s]+) WHO ARE YOU/, line);
     this.varName = this.parts[1];
   }
 }
@@ -207,7 +207,7 @@ export class LoopBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super(/WHILE ITS NOT ([a-zA-Z_]+[a-zA-Z0-9_]*) VOTE ME/, line);
+    super(/WHILE ITS NOT ([^\s]+) VOTE ME/, line);
     this.varName = this.parts[1];
   }
 
@@ -225,7 +225,7 @@ export class PrintBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) CAN VOUCH GO AND TELL THEM COME ON/, line);
+    super(/([^\s]+) CAN VOUCH GO AND TELL THEM COME ON/, line);
     this.varName = this.parts[1];
   }
 }
@@ -239,7 +239,7 @@ export class RandomBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super(/IDK WHAT ([a-zA-Z_]+[a-zA-Z0-9_]*) IS BUT ITS BETWEEN ([0-9]+) AND ([0-9]+)/, line);
+    super(/IDK WHAT ([^\s]+) IS BUT ITS BETWEEN ([^\s]+) AND ([^\s]+)/, line);
     this.varName = this.parts[1];
     this.min = StringToInt(this.parts[2]);
     this.max = StringToInt(this.parts[3]);
@@ -255,7 +255,7 @@ export class ReadFileBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) HAS LEFT THE ([a-zA-Z0-9.\-_]+)/, line);
+    super(/([^\s]+) HAS LEFT THE ([^\s]+)/, line);
     this.varName = this.parts[1];
     this.streamName = this.parts[2];
   }
@@ -287,7 +287,7 @@ export class ValueAssignmentBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super(/GUYS I CAN VOUCH ([a-zA-Z_]+[a-zA-Z0-9_]*) IS ([0-9]+)/, line);
+    super(/GUYS I CAN VOUCH ([^\s]+) IS ([^\s]+)/, line);
     this.varName = this.parts[1];
     this.value = StringToInt(this.parts[2]);
   }
@@ -302,7 +302,7 @@ export class VariableAssignmentBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) IS JUST LIKE ([a-zA-Z_]+[a-zA-Z0-9_]*)/, line);
+    super(/([^\s]+) IS JUST LIKE ([^\s]+)/, line);
     this.writeToVarName = this.parts[1];
     this.readFromVarName = this.parts[2];
   }
@@ -317,7 +317,7 @@ export class WriteFileBase extends StatementMixin {
    * @param {string} line
    */
   constructor(line) {
-    super(/([a-zA-Z_]+[a-zA-Z0-9_]*) HAS JOINED THE ([a-zA-Z0-9.\-_]+)/, line);
+    super(/([^\s]+) HAS JOINED THE ([^\s]+)/, line);
     this.varName = this.parts[1];
     this.streamName = this.parts[2];
   }

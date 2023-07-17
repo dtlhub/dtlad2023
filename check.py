@@ -62,7 +62,6 @@ ALLOWED_CHECKER_PATTERNS = [
     "Got requests connection error",
 ]
 FORBIDDEN_CHECKER_PATTERNS = [
-    "requests"
 ]
 
 class ColorType(Enum):

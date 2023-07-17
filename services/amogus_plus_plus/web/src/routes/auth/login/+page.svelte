@@ -14,8 +14,8 @@
   }}
 >
   <section>
-    <label for="username">Username</label>
-    <input id="username" name="username" type="text" size="50" required />
+    <label for="identity">Username / Email</label>
+    <input id="identity" name="identity" type="text" size="50" required />
   </section>
   <section>
     <label for="password">Password</label>
