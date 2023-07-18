@@ -49,7 +49,7 @@ class Checker(BaseChecker):
         s.settimeout(10)
         return s
 
-    def put(self, flag_id: str, flag: str):
+    def put(self, flag_id: str, flag: str, vuln: str):
         session = self.get_initialized_session()
         username = rnd_string(7)
         password = self.mch.register(session, username)
