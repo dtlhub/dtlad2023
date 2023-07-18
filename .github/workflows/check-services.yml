@@ -36,6 +36,7 @@ jobs:
       matrix:
         service:
         - example
+        - labs
 
     steps:
     - uses: actions/checkout@v2

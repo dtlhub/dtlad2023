@@ -30,19 +30,19 @@ OUT_LOCK = Lock()
 DISABLE_LOG = False
 
 DC_REQUIRED_OPTIONS = ['version', 'services']
-DC_ALLOWED_OPTIONS = DC_REQUIRED_OPTIONS + ['volumes']
+DC_ALLOWED_OPTIONS = DC_REQUIRED_OPTIONS + ['volumes', 'links']
 
 CONTAINER_REQUIRED_OPTIONS = ['restart']
 CONTAINER_ALLOWED_OPTIONS = CONTAINER_REQUIRED_OPTIONS + [
-    'pids_limit', 'mem_limit', 'cpus',
     'build', 'image',
     'ports', 'volumes',
     'environment', 'env_file',
     'depends_on',
-    'sysctls', 'privileged', 'security_opt',
-]
-SERVICE_REQUIRED_OPTIONS = ['pids_limit', 'mem_limit', 'cpus']
-SERVICE_ALLOWED_OPTIONS = CONTAINER_ALLOWED_OPTIONS
+    'sysctls', 'privileged', 'security_opt', 'links'
+    
+] + ['pids_limit', 'mem_limit', 'cpus']
+SERVICE_REQUIRED_OPTIONS = [] 
+SERVICE_ALLOWED_OPTIONS = CONTAINER_ALLOWED_OPTIONS + ['pids_limit', 'mem_limit', 'cpus']
 DATABASES = [
     'redis', 'postgres', 'mysql', 'mariadb',
     'mongo', 'mssql', 'clickhouse', 'tarantool',
@@ -314,8 +314,8 @@ class StructureValidator(BaseValidator):
                 return
 
             self._error(
-                2.4 <= dc_version < 3,
-                f'invalid version in {path}, need >=2.4 and <3, got {dc_version}',
+                2.4 <= dc_version <= 3.8,
+                f'invalid version in {path}, need >=2.4 and <3.8, got {dc_version}',
             )
 
             for opt in dc:
