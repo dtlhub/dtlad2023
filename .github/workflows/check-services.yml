@@ -36,7 +36,7 @@ jobs:
       matrix:
         service:
         - example
-        - labs
+        - schizichs 
 
     steps:
     - uses: actions/checkout@v2
