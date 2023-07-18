@@ -19,9 +19,7 @@ class Checker(BaseChecker):
     def action(self, action, *args, **kwargs):
         try:
             super(Checker, self).action(action, *args, **kwargs)
-        except TimeoutError:
-            self.cquit(Status.DOWN, 'Connection error', 'Got socket connection error')
-        except ConnectionError:
+        except (TimeoutError, ConnectionError):
             self.cquit(Status.DOWN, 'Connection error', 'Got socket connection error')
 
     def check(self):
