@@ -4,7 +4,7 @@ services:
   app:
     build: .
     restart: unless-stopped
-    cpus: '1'
+    cpus: '3'
     mem_limit: 400M
     pids_limit: 256
     volumes:
