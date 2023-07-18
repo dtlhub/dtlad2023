@@ -86,8 +86,6 @@ class Checker(BaseChecker):
         assert_eq(200, int(ans.status_code), Status.CORRUPT)
 
         home = self.mch.home(session).text
-        print(home)
-
         assert_eq(True, flag in home, "", Status.CORRUPT)
         self.cquit(Status.OK)
 
