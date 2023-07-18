@@ -8,6 +8,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["touch", "users.db"]
-
 CMD ["python", "main.py"]
