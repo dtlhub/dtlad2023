@@ -57,6 +57,8 @@ class Checker(BaseChecker):
 
         home_status = int(self.mch.home(session).status_code)
         self.assert_eq(200, home_status, "Cannot get home with iv on ECDSA256")
+        if 'token' not in session.cookies.keys():
+            print(session.cookies.keys())
         self.assert_eq(True, 'token' in session.cookies.keys(), "Token is empty ecdsa256", Status.MUMBLE)
 
         return session.cookies['token']
