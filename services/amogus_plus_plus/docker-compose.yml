@@ -17,6 +17,7 @@ services:
   web:
     container_name: web
     restart: unless-stopped
+    user: node
     pids_limit: 256
     mem_limit: 400M
     cpus: 1
