@@ -1,3 +1,4 @@
 src/images
 src/db
 data
+!.env
