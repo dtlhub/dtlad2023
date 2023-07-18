@@ -50,14 +50,9 @@ func newLabResult(expected, testResult float64, labName, comment string) *LabRes
 	return lr
 }
 
-func (lc *LabResultsController) GetLabs() []PublicResults {
-	var tmp []LabResult
-	var results []PublicResults
-	lc.db.Find(&tmp)
-	results = make([]PublicResults, len(tmp))
-	for i, v := range tmp {
-		results[i] = v.PublicResults
-	}
+func (lc *LabResultsController) GetLabs() []LabResult {
+	var results []LabResult
+	lc.db.Find(&results)
 	return results
 }
 
