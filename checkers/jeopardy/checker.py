@@ -26,7 +26,7 @@ class Checker(BaseChecker):
     
     def __check_register_rc4(self):
         session = get_initialized_session()
-        username, password = rnd_username(), rnd_password()
+        username, password = rnd_string(40), rnd_password()
 
         flag = rnd_string(10)
         iv = rnd_string(20)
@@ -45,7 +45,7 @@ class Checker(BaseChecker):
 
     def __check_register_ecdsa(self):
         session = get_initialized_session()
-        username, password = rnd_username(), rnd_password()
+        username, password = rnd_string(40), rnd_password()
 
         flag = rnd_string(10)
         register_ans = self.mch.register_arc(session, username, password, flag, '')
@@ -57,8 +57,6 @@ class Checker(BaseChecker):
 
         home_status = int(self.mch.home(session).status_code)
         self.assert_eq(200, home_status, "Cannot get home with iv on ECDSA256")
-        if 'token' not in session.cookies.keys():
-            print(session.cookies.keys())
         self.assert_eq(True, 'token' in session.cookies.keys(), "Token is empty ecdsa256", Status.MUMBLE)
 
         return session.cookies['token']
@@ -83,7 +81,7 @@ class Checker(BaseChecker):
 
     def put(self, flag_id: str, flag: str, vuln:str):
         session = get_initialized_session()
-        username, password = rnd_username(), rnd_password()
+        username, password = rnd_string(40), rnd_password()
 
         register_ans = self.mch.register_ecdsa(session, username, password, flag)
 
