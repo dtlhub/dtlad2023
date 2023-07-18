@@ -13,8 +13,8 @@ RUN npm prune --production
 FROM node:20-alpine
 
 WORKDIR /app
-RUN chown node:node /app
-USER node
+RUN chown nonroot:nonroot /app
+USER nonroot
 
 COPY --from=builder --chown=nonroot:nonroot /app/build build/
 COPY --from=builder --chown=nonroot:nonroot /app/node_modules node_modules/
