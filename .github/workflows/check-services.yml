@@ -36,7 +36,7 @@ jobs:
       matrix:
         service:
         - example
-
+        - Zapiski
     steps:
     - uses: actions/checkout@v2
 

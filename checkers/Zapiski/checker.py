@@ -19,9 +19,7 @@ class Checker(BaseChecker):
     def action(self, action, *args, **kwargs):
         try:
             super(Checker, self).action(action, *args, **kwargs)
-        except TimeoutError:
-            self.cquit(Status.DOWN, 'Connection error', 'Got socket connection error')
-        except ConnectionError:
+        except (TimeoutError, ConnectionError):
             self.cquit(Status.DOWN, 'Connection error', 'Got socket connection error')
 
     def check(self):
@@ -49,7 +47,7 @@ class Checker(BaseChecker):
         s.settimeout(10)
         return s
 
-    def put(self, flag_id: str, flag: str):
+    def put(self, flag_id: str, flag: str, vuln: str):
         session = self.get_initialized_session()
         username = rnd_string(7)
         password = self.mch.register(session, username)
@@ -66,7 +64,7 @@ class Checker(BaseChecker):
         value = self.mch.get_note(session, note_name_full)
         self.assert_eq(value, flag, "Note value is invalid", Status.CORRUPT)
         session.close()
-        self.cquit(Status.OK, f'', f'')
+        self.cquit(Status.OK)
 
 
 if __name__ == '__main__':
