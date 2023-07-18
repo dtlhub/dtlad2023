@@ -14,6 +14,11 @@ FROM node:20-alpine
 
 WORKDIR /app
 RUN chown node:node /app
+
+RUN mkdir /data
+RUN chown node:node /data
+VOLUME /data
+
 USER node
 
 COPY --from=builder --chown=node:node /app/build build/

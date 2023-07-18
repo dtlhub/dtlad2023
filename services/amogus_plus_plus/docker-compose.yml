@@ -17,7 +17,6 @@ services:
   web:
     container_name: web
     restart: unless-stopped
-    user: node
     pids_limit: 256
     mem_limit: 400M
     cpus: 1
@@ -48,13 +47,3 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-  cleaner:
-    image: c4tbuts4d/dedcleaner:latest
-    restart: unless-stopped
-    volumes:
-      - ./data:/workspaces
-    environment:
-      - DELETE_AFTER=20m
-      - SLEEP=5m
-      - DIRS=/workspaces
