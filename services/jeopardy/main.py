@@ -4,6 +4,7 @@ from flask import session
 from tokens.tokens import Tokens
 from database.database import Database
 import json
+import time
 
 app = Flask(__name__)
 db = Database()
@@ -85,5 +86,4 @@ def home():
     return render_template('home.html',flag=db.get_flag(user))
 
 if __name__ == "__main__":
-    from waitress import serve
-    serve(app,host='0.0.0.0', port=5001,threads=64)
+    app.run(host='0.0.0.0', port=5001, threaded=False, processes=1)

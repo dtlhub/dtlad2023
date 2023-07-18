@@ -11,7 +11,7 @@ from jeopardy_lib import *
 
 class Checker(BaseChecker):
     vulns: int = 1
-    timeout: int = 5
+    timeout: int = 15
     uses_attack_data: bool = True
 
     def __init__(self, *args, **kwargs):
@@ -35,7 +35,6 @@ class Checker(BaseChecker):
         self.assert_eq(200, register_status, "Cannot register with ARC228")
         self.assert_eq(True, 'token' in session.cookies.keys(), "Token is empty arc228", Status.MUMBLE)
         token = session.cookies['token']
-
 
         home_status = int(self.mch.home(session, iv).status_code)
         self.assert_eq(200, home_status, "Cannot get home with iv on ARC228")

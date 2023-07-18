@@ -9,7 +9,7 @@ class Singleton(type):
 
 class Database(metaclass=Singleton):
     def __init__(self) -> None:
-        self.connection = sqlite3.connect('users.db', check_same_thread=False)
+        self.connection = sqlite3.connect('users.db', check_same_thread=True)
         cur = self.connection.cursor()
         cur.execute("""
             CREATE TABLE IF NOT EXISTS users(
