@@ -2,6 +2,7 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from checklib import *
+from typing import Union, Tuple, Set
 
 PORT = 1984
 
@@ -65,7 +66,7 @@ class CheckMachine:
         session.headers.pop('Cookie')
 
     def create_workspace(
-        self, session: requests.Session, name: str, description: str | None
+        self, session: requests.Session, name: str, description: Union[str, None]
     ) -> str:
         response = session.post(
             f'{self.url}/playground?/createWorkspace',
@@ -77,7 +78,7 @@ class CheckMachine:
         except (requests.exceptions.JSONDecodeError, KeyError, AssertionError) as ex:
             self.c.cquit(Status.MUMBLE, 'Unable to create workspace', str(ex))
 
-    def list_workspaces(self, session: requests.Session) -> set[str]:
+    def list_workspaces(self, session: requests.Session) -> Set[str]:
         response = session.get(f'{self.url}/playground')
         soup = BeautifulSoup(response.text, 'html.parser')
         main = soup.find('main')
@@ -87,7 +88,7 @@ class CheckMachine:
         )
         return set(workspaces)
 
-    def get_workspace_description(self, session: requests.Session, id: str) -> str | None:
+    def get_workspace_description(self, session: requests.Session, id: str) -> Union[str, None]:
         response = session.get(f'{self.url}/playground')
         soup = BeautifulSoup(response.text, 'html.parser')
         workspace_anchor = soup.find('a', {'href': f"/workspace/{id}"})
@@ -156,7 +157,7 @@ class CheckMachine:
 
     def execute_file_from_workspace(
         self, session: requests.Session, workspace_id: str, filename: str, stdin: str
-    ) -> tuple[set[str], str]:
+    ) -> Tuple[Set[str], str]:
         response = session.post(
             f'{self.url}/workspace/{workspace_id}/{filename}',
             json={
