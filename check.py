@@ -449,7 +449,6 @@ def start_services(_args):
 
 def stop_services(_args):
     for service in get_services():
-        service.logs()
         service.down()
 
 
