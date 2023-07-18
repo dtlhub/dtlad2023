@@ -25,7 +25,7 @@ class Checker(BaseChecker):
             self.cquit(Status.DOWN, 'Connection error', 'Got requests connection error')
     
     def __check_register_rc4(self):
-        session = get_initialized_session()
+        session = self.get_initialized_session()
         username, password = rnd_string(40), rnd_password()
 
         flag = rnd_string(10)
@@ -33,23 +33,22 @@ class Checker(BaseChecker):
         register_ans = self.mch.register_arc(session, username, password, flag, iv)
         register_status = int(register_ans.status_code)
         self.assert_eq(200, register_status, "Cannot register with ARC228")
-        time.sleep(0.1)
         self.assert_eq(True, 'token' in session.cookies.keys(), "Token is empty arc228", Status.MUMBLE)
         token = session.cookies['token']
 
 
         home_status = int(self.mch.home(session, iv).status_code)
         self.assert_eq(200, home_status, "Cannot get home with iv on ARC228")
+        session.close()
         
         return token, iv
 
     def __check_register_ecdsa(self):
-        session = get_initialized_session()
+        session = self.get_initialized_session()
         username, password = rnd_string(40), rnd_password()
 
         flag = rnd_string(10)
         register_ans = self.mch.register_arc(session, username, password, flag, '')
-        time.sleep(0.1)
         register_ans.text
         register_status = int(register_ans.status_code)
 
@@ -58,29 +57,32 @@ class Checker(BaseChecker):
         home_status = int(self.mch.home(session).status_code)
         self.assert_eq(200, home_status, "Cannot get home with iv on ECDSA256")
         self.assert_eq(True, 'token' in session.cookies.keys(), "Token is empty ecdsa256", Status.MUMBLE)
+        session.close()
 
         return session.cookies['token']
 
     def __check_auth_by_cookie(self):
-        session = get_initialized_session()
+        session = self.get_initialized_session()
         rc4cookie, iv = self.__check_register_rc4()
         session.cookies.update({"Cookie": rc4cookie})
 
         status = int(self.mch.home(session, iv).status_code)
         self.assert_eq(200, status, "Cannot get home with old cookie on ARC228")
+        session.close()
 
-        session = get_initialized_session()
+        session = self.get_initialized_session()
         ecdsacookie = self.__check_register_ecdsa()
         session.cookies.update({"Cookie": ecdsacookie})
         status = int(self.mch.home(session, iv).status_code)
         self.assert_eq(200, status, "Cannot get home with old cookie on ECDSA")
+        session.close()
 
     def check(self):
         self.__check_auth_by_cookie()
         self.cquit(Status.OK)
 
     def put(self, flag_id: str, flag: str, vuln:str):
-        session = get_initialized_session()
+        session = self.get_initialized_session()
         username, password = rnd_string(40), rnd_password()
 
         register_ans = self.mch.register_ecdsa(session, username, password, flag)
@@ -88,7 +90,7 @@ class Checker(BaseChecker):
         self.cquit(Status.OK, username, f'{username}:{password}')
 
     def get(self, flag_id: str, flag: str, vuln:str):
-        session = get_initialized_session()
+        session = self.get_initialized_session()
         username, password = flag_id.split(':')
         ans = self.mch.login(session, username, password)
         assert_eq(200, int(ans.status_code), Status.CORRUPT)
