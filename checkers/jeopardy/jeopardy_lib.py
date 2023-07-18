@@ -1,7 +1,7 @@
 import requests
 from checklib import *
 
-PORT = 5000
+PORT = 5001
 class CheckMachine:
     @property 
     def url(self):

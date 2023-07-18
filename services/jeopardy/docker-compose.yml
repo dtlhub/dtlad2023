@@ -1,7 +1,11 @@
-version: '3'
+version: '2'
 
 services:
   app:
     build: .
+    restart: unless-stopped
+    mem_limit: 400M
+    volumes:
+      - ./users.db:/app/users.db
     ports:
-      - "5000:5000"
+      - "5001:5001"
