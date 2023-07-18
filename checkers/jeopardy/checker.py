@@ -34,6 +34,7 @@ class Checker(BaseChecker):
         register_status = int(register_ans.status_code)
         self.assert_eq(200, register_status, "Cannot register with ARC228")
         time.sleep(0.1)
+        self.assert_eq(True, 'token' in session.cookies.keys(), "Token is empty arc228", Status.MUMBLE)
         token = session.cookies['token']
 
 
@@ -56,6 +57,7 @@ class Checker(BaseChecker):
 
         home_status = int(self.mch.home(session).status_code)
         self.assert_eq(200, home_status, "Cannot get home with iv on ECDSA256")
+        self.assert_eq(True, 'token' in session.cookies.keys(), "Token is empty ecdsa256", Status.MUMBLE)
 
         return session.cookies['token']
 
