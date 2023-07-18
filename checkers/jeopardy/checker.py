@@ -3,6 +3,7 @@
 import sys
 import requests
 import re
+import time
 
 from checklib import *
 from jeopardy_lib import *
@@ -32,11 +33,14 @@ class Checker(BaseChecker):
         register_ans = self.mch.register_arc(session, username, password, flag, iv)
         register_status = int(register_ans.status_code)
         self.assert_eq(200, register_status, "Cannot register with ARC228")
+        time.sleep(0.1)
+        token = session.cookies['token']
+
 
         home_status = int(self.mch.home(session, iv).status_code)
         self.assert_eq(200, home_status, "Cannot get home with iv on ARC228")
         
-        return session.cookies['token'], iv
+        return token, iv
 
     def __check_register_ecdsa(self):
         session = get_initialized_session()
@@ -44,6 +48,8 @@ class Checker(BaseChecker):
 
         flag = rnd_string(10)
         register_ans = self.mch.register_arc(session, username, password, flag, '')
+        time.sleep(0.1)
+        register_ans.text
         register_status = int(register_ans.status_code)
 
         self.assert_eq(200, register_status, "Cannot register with ECDSA256")
