@@ -64,7 +64,7 @@ class Checker(BaseChecker):
         value = self.mch.get_note(session, note_name_full)
         self.assert_eq(value, flag, "Note value is invalid", Status.CORRUPT)
         session.close()
-        self.cquit(Status.OK, f'', f'')
+        self.cquit(Status.OK)
 
 
 if __name__ == '__main__':
