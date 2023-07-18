@@ -24,8 +24,6 @@ services:
       context: web/
     ports:
       - 3000
-    volumes:
-      - ./data:/data
     depends_on:
       - pocketbase
 
