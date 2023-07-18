@@ -276,7 +276,7 @@ class Checker(BaseChecker):
         self.cquit(Status.OK)
 
     def put_email_flag(self, flag: str):
-        session = requests.Session()
+        session = self.get_initialized_session()
         username = rnd_username()
         password = rnd_password()
         self.mch.register(session, username, f'{flag}@flag.com', password)
@@ -287,7 +287,7 @@ class Checker(BaseChecker):
         )
 
     def put_workspace_description_flag(self, flag: str):
-        session = requests.Session()
+        session = self.get_initialized_session()
         username = rnd_username()
         email = f'{username}@mail.ru'
         password = rnd_password()
@@ -302,7 +302,7 @@ class Checker(BaseChecker):
         )
 
     def put_file_content_flag(self, flag: str):
-        session = requests.Session()
+        session = self.get_initialized_session()
         username = rnd_username()
         email = f'{username}@mail.ru'
         password = rnd_password()
@@ -330,7 +330,7 @@ class Checker(BaseChecker):
         data = json.loads(flag_id)
         password = data["password"]
 
-        session = requests.Session()
+        session = self.get_initialized_session()
         self.mch.login_via_pocketbase_api(session, f'{flag}@flag.com', password)
         self.assert_in(
             "Authorization", session.headers, "Unable to login via pocketbase api", Status.CORRUPT
@@ -343,7 +343,7 @@ class Checker(BaseChecker):
         password = data["password"]
         workspace_id = data["workspace"]
 
-        session = requests.Session()
+        session = self.get_initialized_session()
         self.mch.login(session, username, password)
         description = self.mch.get_workspace_description(session, workspace_id)
         self.assert_eq(description, flag, "Unable to get workspace description", Status.MUMBLE)
@@ -355,7 +355,7 @@ class Checker(BaseChecker):
         password = data["password"]
         workspace_id = data["workspace"]
 
-        session = requests.Session()
+        session = self.get_initialized_session()
         self.mch.login(session, username, password)
         main_sus_data = self.mch.get_file_from_workspace(session, workspace_id, "main.sus")
         self.assert_in(flag, main_sus_data, "Unable to save file in workspace", Status.MUMBLE)
