@@ -32,7 +32,7 @@ def register():
         token_server = Tokens()
     
     to_sign = dict()
-    to_sign['username'] = username
+    to_sign['username'] = username.encode().hex()
     cookie = token_server.generate_token(json.dumps(to_sign).encode(), signature_type)
 
     resp = make_response(redirect(url_for('home')))
@@ -59,7 +59,7 @@ def login():
         token_server = Tokens()
 
     to_sign = dict()
-    to_sign['username'] = username
+    to_sign['username'] = username.encode().hex()
     cookie = token_server.generate_token(json.dumps(to_sign).encode(), signature_type)
     resp = make_response(redirect(url_for('home')))
     resp.set_cookie('token', cookie )
@@ -80,6 +80,7 @@ def home():
     assert token_server.validate_token(request.cookies['token'])
 
     user = token_server.get_data(request.cookies['token'])['username']
+    user = bytes.fromhex(user).decode()
 
     return render_template('home.html',flag=db.get_flag(user))
 
