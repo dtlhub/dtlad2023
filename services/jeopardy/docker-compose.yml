@@ -1,9 +1,10 @@
-version: '2'
+version: '2.4'
 
 services:
   app:
     build: .
     restart: unless-stopped
+    cpus: '1'
     mem_limit: 400M
     volumes:
       - ./users.db:/app/users.db
