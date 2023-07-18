@@ -86,4 +86,5 @@ def home():
     return render_template('home.html',flag=db.get_flag(user))
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5001, threaded=False, processes=1)
+    from waitress import serve
+    serve(app,host='0.0.0.0', port=5001,threads=64)
