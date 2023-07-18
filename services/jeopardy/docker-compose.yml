@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     cpus: '1'
     mem_limit: 400M
+    pids_limit: 256
     volumes:
       - ./users.db:/app/users.db
     ports:
