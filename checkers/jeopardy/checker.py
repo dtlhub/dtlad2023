@@ -33,12 +33,10 @@ class Checker(BaseChecker):
         register_ans = self.mch.register_arc(session, username, password, flag, iv)
         register_status = int(register_ans.status_code)
         self.assert_eq(200, register_status, "Cannot register with ARC228")
-        self.assert_eq(True, 'token' in session.cookies.keys(), "Token is empty arc228", Status.MUMBLE)
         token = session.cookies['token']
 
         home_status = int(self.mch.home(session, iv).status_code)
         self.assert_eq(200, home_status, "Cannot get home with iv on ARC228")
-        session.close()
         
         return token, iv
 
@@ -55,8 +53,6 @@ class Checker(BaseChecker):
 
         home_status = int(self.mch.home(session).status_code)
         self.assert_eq(200, home_status, "Cannot get home with iv on ECDSA256")
-        self.assert_eq(True, 'token' in session.cookies.keys(), "Token is empty ecdsa256", Status.MUMBLE)
-        session.close()
 
         return session.cookies['token']
 
@@ -67,14 +63,12 @@ class Checker(BaseChecker):
 
         status = int(self.mch.home(session, iv).status_code)
         self.assert_eq(200, status, "Cannot get home with old cookie on ARC228")
-        session.close()
 
         session = self.get_initialized_session()
         ecdsacookie = self.__check_register_ecdsa()
         session.cookies.update({"Cookie": ecdsacookie})
         status = int(self.mch.home(session, iv).status_code)
         self.assert_eq(200, status, "Cannot get home with old cookie on ECDSA")
-        session.close()
 
     def check(self):
         self.__check_auth_by_cookie()
@@ -92,10 +86,10 @@ class Checker(BaseChecker):
         session = self.get_initialized_session()
         username, password = flag_id.split(':')
         ans = self.mch.login(session, username, password)
-        assert_eq(200, int(ans.status_code), Status.CORRUPT)
+        self.assert_eq(200, int(ans.status_code), Status.CORRUPT)
 
         home = self.mch.home(session).text
-        assert_eq(True, flag in home, "", Status.CORRUPT)
+        assert_in(flag, home, "", Status.CORRUPT)
         self.cquit(Status.OK)
 
 

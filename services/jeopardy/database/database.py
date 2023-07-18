@@ -1,5 +1,4 @@
 import sqlite3
-import multiprocessing
 import threading
 
 class Singleton(type):
@@ -10,12 +9,6 @@ class Singleton(type):
         return cls._instances[cls]
 
 class Database(metaclass=Singleton):
-    def __new__(cls):
-        #pizdec ochen mnogo singltona
-        if not hasattr(cls, 'instance'):
-            cls.instance = super(Database, cls).__new__(cls)
-        return cls.instance
-
     def __init__(self) -> None:
         self.sem = threading.Semaphore()
         self.connection = sqlite3.connect('users.db', check_same_thread=False)
@@ -43,7 +36,6 @@ class Database(metaclass=Singleton):
             self.sem.release()
             return True
         except Exception as e:
-            print(str(e))
             return False
 
     def login(self, username: str, password: str) -> bool:
