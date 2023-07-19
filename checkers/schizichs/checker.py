@@ -22,7 +22,7 @@ class Checker(BaseChecker):
             self.cquit(Status.DOWN, 'Connection error', 'Got requests connection error')
 
     def check(self):
-        session = get_initialized_session()
+        session = self.get_initialized_session()
         username, password = rnd_username(), rnd_password()
 
         comment = rnd_string(20)
@@ -39,7 +39,7 @@ class Checker(BaseChecker):
         self.cquit(Status.OK)
 
     def put(self, flag_id: str, flag: str, vuln: str):
-        session = get_initialized_session()
+        session = self.get_initialized_session()
         username, password = rnd_username(), rnd_password()
 
         lab_name_full = rnd_string(10)
@@ -61,7 +61,7 @@ class Checker(BaseChecker):
         self.cquit(Status.OK, lab_name_public, f'{username}:{password}:{lab_name_full}')
 
     def get(self, flag_id: str, flag: str, vuln: str):
-        s = get_initialized_session()
+        s = self.get_initialized_session()
         username, password, note_name_full = flag_id.split(':')
 
         self.mch.login(s, username, password, Status.CORRUPT)
