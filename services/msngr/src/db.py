@@ -2,6 +2,7 @@ import sqlite3
 import threading
 
 
+
 class Singleton(type):
     _instances = {}
 
@@ -14,20 +15,19 @@ class Singleton(type):
 class Database(metaclass=Singleton):
     def __init__(self):
         self.connection = sqlite3.connect('data/users.db', check_same_thread=False)
-        self.db_write_lock = threading.Lock()
-        with self.connection, self.db_write_lock:
-            cur = self.connection.cursor()
-            cur.execute(
-                """
-                CREATE TABLE IF NOT EXISTS users(
-                id INTEGER PRIMARY KEY,
-                username TEXT UNIQUE,
-                secret_key TEXT,
-                hello_message TEXT,
-                secret_message TEXT
-            )"""
-            )
-            cur.close()
+        self.sem = threading.Semaphore()
+        cur = self.connection.cursor()
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS users(
+            id INTEGER PRIMARY KEY,
+            username TEXT UNIQUE,
+            secret_key TEXT,
+            hello_message TEXT,
+            secret_message TEXT
+        )"""
+        )
+        cur.close()
 
     # return 500 last users
     def users_list(self):
@@ -45,15 +45,16 @@ class Database(metaclass=Singleton):
 
     def add_user(self, username, secret_key, hello_message, secret_message):
         try:
-            with self.connection, self.db_write_lock:
-                cur = self.connection.cursor()
-                cur.execute(
-                    """
-                    INSERT INTO users(username, secret_key, hello_message, secret_message) VALUES(?,?,?,?);
-                """,
-                    [username, secret_key, hello_message, secret_message],
-                )
-                cur.close()
+            self.sem.acquire()
+            cur = self.connection.cursor()
+            cur.execute(
+                """
+                INSERT INTO users(username, secret_key, hello_message, secret_message) VALUES(?,?,?,?);
+            """,
+                [username, secret_key, hello_message, secret_message],
+            )
+            cur.close()
+            self.sem.release()
             return "Succesfully registered", True
         except Exception as e:
             return str(e), False

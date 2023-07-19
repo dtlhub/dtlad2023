@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 import os
 import sys
@@ -19,7 +19,7 @@ context.log_level = 'critical'  # bIbIbIbIbIbIbIbIbIbIbI
 PORT = 8441
 
 
-def get_random_hello_string(length: int = 15) -> str:
+def get_random_hello_string(length:int = 15) -> str:
     alphabet = ascii_letters + digits + r'!#$%&()*+,-./:;<=>?@[]^_`{|}~'
     return ''.join(choice(alphabet) for _ in range(length))
 
@@ -31,7 +31,7 @@ def get_random_secret_string(length: int = 15) -> str:
 
 class Checker(BaseChecker):
     vulns: int = 1
-    timeout: int = 15
+    timeout: int = 30
     uses_attack_data: bool = True
 
     def __init__(self, *args, **kwargs):
@@ -50,7 +50,6 @@ class Checker(BaseChecker):
 
         # This hack works, because `pwn.remote` also has method `.close()`
         self._sessions.append(r)  # type: ignore
-
         # Skip 'welcom to mesfnasensgetR! on SANbKA!!'
         r.recvline()
 

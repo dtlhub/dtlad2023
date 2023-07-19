@@ -84,7 +84,7 @@ class CheckMachine:
             response, "message", str, "Failed to communicate via dh_feistel"
         )  # type: ignore
         cipher_key: str = self._try_get_from_json(
-            response, "message", str, "Failed to communicate via dh_feistel"
+            response, "cipher_key", str, "Failed to communicate via dh_feistel"
         )  # type: ignore
         return message, cipher_key
 

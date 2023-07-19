@@ -1,5 +1,6 @@
-services:
-  msngr:
+version: '2.4'
+services: 
+  msngr: 
     build: src
     cpus: 1
     mem_limit: 500M
