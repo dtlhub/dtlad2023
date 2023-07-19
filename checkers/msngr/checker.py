@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import os
 import sys
@@ -6,7 +6,6 @@ from string import ascii_letters, digits
 from random import choice
 from checklib import *  # noqa: F403
 from Crypto.Util.number import getPrime
-
 
 argv = [c for c in sys.argv]  # https://docs.pwntools.com/en/stable/args.html :)))))))))))
 os.environ['PWNLIB_NOTERM'] = '1'  # https://stackoverflow.com/a/67183309/15078906 :)))))))))))
