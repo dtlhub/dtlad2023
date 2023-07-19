@@ -4,6 +4,7 @@ services:
     cpus: 1
     mem_limit: 500M
     pids_limit: 256
+    restart: unless-stopped
     ports:
       - 8441:8441
     volumes:
