@@ -10,12 +10,21 @@ services:
     env_file: .env
     ports:
       - 9993:9993
+    restart: unless-stopped
+    pids_limit: 256
+    mem_limit: 400M
+    cpus: 0.5
+
   db:
     image: mysql
     restart: unless-stopped
     env_file: .env
     volumes:
       - data:/var/lib/mysql
+    restart: unless-stopped
+    pids_limit: 256
+    mem_limit: 400M
+    cpus: 0.5
 
 volumes:
   data:
