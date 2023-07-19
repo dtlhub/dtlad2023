@@ -1,4 +1,5 @@
 import sqlite3
+import threading
 
 
 class Singleton(type):
@@ -13,7 +14,8 @@ class Singleton(type):
 class Database(metaclass=Singleton):
     def __init__(self):
         self.connection = sqlite3.connect('data/users.db', check_same_thread=False)
-        with self.connection:
+        self.db_write_lock = threading.Lock()
+        with self.connection, self.db_write_lock:
             cur = self.connection.cursor()
             cur.execute(
                 """
@@ -43,7 +45,7 @@ class Database(metaclass=Singleton):
 
     def add_user(self, username, secret_key, hello_message, secret_message):
         try:
-            with self.connection:
+            with self.connection, self.db_write_lock:
                 cur = self.connection.cursor()
                 cur.execute(
                     """
