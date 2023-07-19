@@ -1,4 +1,3 @@
-version: '2.4'
 services:
   zapiski:
     build: ./
@@ -8,3 +7,20 @@ services:
     cpus: 0.5
     ports:
       - 5712:5712
+    volumes:
+      - "./users:/service/users"
+
+  cleaner:
+    image: c4tbuts4d/dedcleaner:latest
+    restart: unless-stopped
+    pids_limit: 128
+    mem_limit: 128M
+    cpus: 0.25
+    volumes:
+      - "./users:/users"
+    environment:
+      - DELETE_AFTER=20m
+      - SLEEP=20m
+      - DIRS=/users
+    depends_on:
+      - zapiski
