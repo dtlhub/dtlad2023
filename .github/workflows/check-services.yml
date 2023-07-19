@@ -36,6 +36,7 @@ jobs:
       matrix:
         service:
         - example
+        - amogus_plus_plus
         - jeopardy
         - Zapiski
         - msngr

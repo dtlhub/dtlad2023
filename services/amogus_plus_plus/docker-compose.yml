@@ -1,0 +1,62 @@
+services:
+  nginx:
+    container_name: proxy
+    image: nginx:stable-alpine3.17-slim
+    restart: unless-stopped
+    pids_limit: 256
+    mem_limit: 200M
+    cpus: 0.25
+    ports:
+      - 1984:80
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d:ro
+    depends_on:
+      - web
+      - pocketbase
+      - cleaner
+
+  web:
+    container_name: web
+    restart: unless-stopped
+    pids_limit: 256
+    mem_limit: 400M
+    cpus: 1
+    build:
+      context: web/
+    volumes:
+      - ./data:/data
+    ports:
+      - 3000
+    depends_on:
+      - pocketbase
+
+  pocketbase:
+    container_name: pocketbase
+    image: ghcr.io/muchobien/pocketbase:0.16.6
+    restart: unless-stopped
+    pids_limit: 256
+    mem_limit: 400M
+    cpus: 0.5
+    ports:
+      - 8090:8090
+    volumes:
+      - ./pocketbase/pb_data:/pb_data
+      - ./pocketbase/pb_public:/pb_public
+      - ./pocketbase/pb_migrations:/pb_migrations
+    healthcheck:
+      test: wget --post-data 'identity=admin@admin.com&password=administrator' --no-verbose --tries=1 --spider http://localhost:8090/api/admins/auth-with-password || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  cleaner:
+    container_name: cleaner
+    build: cleaner
+    cpus: 0.25
+    pids_limit: 128
+    mem_limit: 128M
+    restart: unless-stopped
+    volumes:
+      - ./data:/tmp/data
+    depends_on:
+      - web

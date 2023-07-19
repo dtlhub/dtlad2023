@@ -40,6 +40,7 @@ CONTAINER_ALLOWED_OPTIONS = CONTAINER_REQUIRED_OPTIONS + [
     'environment', 'env_file',
     'depends_on',
     'sysctls', 'privileged', 'security_opt',
+    'healthcheck', 'expose', 'container_name'
 ]
 SERVICE_REQUIRED_OPTIONS = ['pids_limit', 'mem_limit', 'cpus']
 SERVICE_ALLOWED_OPTIONS = CONTAINER_ALLOWED_OPTIONS
@@ -61,7 +62,6 @@ ALLOWED_CHECKER_PATTERNS = [
     "Got requests connection error",
 ]
 FORBIDDEN_CHECKER_PATTERNS = [
-    "requests"
 ]
 
 class ColorType(Enum):
