@@ -14,11 +14,6 @@ FROM node:20-alpine
 
 WORKDIR /app
 RUN chown node:node /app
-
-RUN mkdir /data
-RUN chown node:node /data
-VOLUME /data
-
 USER node
 
 COPY --from=builder --chown=node:node /app/build build/
@@ -26,4 +21,7 @@ COPY --from=builder --chown=node:node /app/node_modules node_modules/
 COPY package.json .
 
 ENV NODE_ENV=production
-CMD ["node", "build"]
+
+USER root
+COPY entrypoint.sh /entrypoint.sh
+CMD ["/entrypoint.sh"]
