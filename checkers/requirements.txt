@@ -1,2 +1,4 @@
-checklib
 requests==2.25.1
+checklib==0.5.2
+pwntools==4.10.0
+pycryptodome==3.18.0

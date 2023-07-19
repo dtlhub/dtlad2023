@@ -1,6 +1,6 @@
 # ad-boilerplate
 
-[![check-services](https://github.com/C4T-BuT-S4D/ad-boilerplate/actions/workflows/check-services.yml/badge.svg?branch=master&event=push)](https://github.com/C4T-BuT-S4D/ad-boilerplate/actions/workflows/check-services.yml)
+[![check-services](https://github.com/dtlhub/dtlad2023/actions/workflows/check-services.yml/badge.svg?branch=master&event=push)](https://github.com/dtlhub/dtlad2023/actions/workflows/check-services.yml)
 
 Development workflow:
 

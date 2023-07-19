@@ -1,0 +1,13 @@
+version: '2.4'
+services: 
+  msngr: 
+    build: src
+    cpus: 1
+    mem_limit: 500M
+    pids_limit: 256
+    restart: unless-stopped
+    ports:
+      - 8441:8441
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data

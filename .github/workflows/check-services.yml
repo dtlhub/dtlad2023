@@ -37,6 +37,8 @@ jobs:
         service:
         - example
         - jeopardy
+        - Zapiski
+        - msngr
 
     steps:
     - uses: actions/checkout@v2
