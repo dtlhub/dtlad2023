@@ -1,6 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from tokens.elliptic.rng import RNG
+from Crypto.Util.number import *
 
 @dataclass
 class EllipticCurve:
@@ -61,7 +62,7 @@ class ECDSA:
         self.G = EllipticPoint(0x6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296,
                                0x4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5,
                                self.curve)
-        self.d = 1337
+        self.d = bytes_to_long(key)
         self.Q = self.G * self.d
         self.rng = RNG()
 

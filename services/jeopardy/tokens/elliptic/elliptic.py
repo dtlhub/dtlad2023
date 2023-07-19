@@ -1,6 +1,8 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from tokens.elliptic.rng import RNG
+from hashlib import md5
+from Crypto.Util.number import long_to_bytes, bytes_to_long
 
 @dataclass
 class EllipticCurve:
@@ -66,6 +68,7 @@ class ECDSA:
         self.rng = RNG()
 
     def sign(self, m: int) -> (int, int):
+        m = bytes_to_long(md5(long_to_bytes(m)).digest())
         k = self.rng.randless(self.curve.n - 1)
         r = (self.G * k).x
         if r == 0:
@@ -86,6 +89,7 @@ class ECDSA:
         if not 0 < s < self.curve.n:
             return False
 
+        m = bytes_to_long(md5(long_to_bytes(m)).digest())
         w = pow(s, -1, self.curve.n)
         u1 = (m * w) % self.curve.n
         u2 = (r * w) % self.curve.n
@@ -97,7 +101,6 @@ class ECDSA:
 def main():
     ecdsa = ECDSA()
     r,s = ecdsa.sign(5)
-    print(ecdsa.validate(5, r,s))
 
 
 if __name__ == "__main__":
