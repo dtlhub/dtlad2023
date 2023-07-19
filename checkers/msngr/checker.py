@@ -4,6 +4,7 @@ import os
 import sys
 from string import ascii_letters, digits
 from random import choice
+os.system("pip freeze")
 from checklib import *
 from Crypto.Util.number import getPrime
 
