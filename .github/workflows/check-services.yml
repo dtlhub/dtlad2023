@@ -36,6 +36,7 @@ jobs:
       matrix:
         service:
         - example
+        - Zapiski
         - msngr
 
     steps:
