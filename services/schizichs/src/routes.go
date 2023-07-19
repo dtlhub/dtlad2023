@@ -33,8 +33,8 @@ func deauthenticateUser(c *gin.Context) {
 }
 
 func showMainPage(g *gin.Context) {
-	results := labController.GetLabs()
-	render(g, "index.html", gin.H{"header": "Home page", "payload": results})
+	publicResults := labController.GetLabs()
+	render(g, "index.html", gin.H{"header": "Home page", "publicResults": publicResults})
 }
 
 func showRegisterPage(c *gin.Context) {

@@ -51,9 +51,9 @@ func newLabResult(expected, testResult float64, labName, comment string) *LabRes
 }
 
 func (lc *LabResultsController) GetLabs() []LabResult {
-	var results []LabResult
-	lc.db.Find(&results)
-	return results
+	var publicResults []LabResult
+    lc.db.Find(&publicResults)
+	return publicResults 
 }
 
 func (lc *LabResultsController) GetLabByNameAndID(labName string, id uint) ([]LabResult, bool) {
