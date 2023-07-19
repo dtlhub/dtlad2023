@@ -36,6 +36,7 @@ jobs:
       matrix:
         service:
         - example
+        - jeopardy
         - Zapiski
         - msngr
 
