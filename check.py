@@ -29,7 +29,7 @@ HOST = os.getenv('HOST', default='127.0.0.1')
 OUT_LOCK = Lock()
 DISABLE_LOG = False
 
-DC_REQUIRED_OPTIONS = ['version', 'services']
+DC_REQUIRED_OPTIONS = ['services']
 DC_ALLOWED_OPTIONS = DC_REQUIRED_OPTIONS + ['volumes']
 
 CONTAINER_REQUIRED_OPTIONS = ['restart']
@@ -303,20 +303,6 @@ class StructureValidator(BaseValidator):
             for opt in DC_REQUIRED_OPTIONS:
                 if self._error(opt in dc, f'required option {opt} not in {path}'):
                     return
-
-            if self._error(isinstance(dc['version'], str), f'version option in {path} is not string'):
-                return
-
-            try:
-                dc_version = float(dc['version'])
-            except ValueError:
-                self._error(False, f'version option in {path} is not float')
-                return
-
-            self._error(
-                2.4 <= dc_version < 3,
-                f'invalid version in {path}, need >=2.4 and <3, got {dc_version}',
-            )
 
             for opt in dc:
                 self._error(
