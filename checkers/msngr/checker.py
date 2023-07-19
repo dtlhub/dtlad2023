@@ -1,19 +1,16 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import os
-os.system("pip freeze")
-
 import sys
 from string import ascii_letters, digits
 from random import choice
+from checklib import *  # noqa: E403
 from Crypto.Util.number import getPrime
 
 argv = [c for c in sys.argv]  # https://docs.pwntools.com/en/stable/args.html :)))))))))))
 os.environ['PWNLIB_NOTERM'] = '1'  # https://stackoverflow.com/a/67183309/15078906 :)))))))))))
 from pwn import remote, PwnlibException, context  # IIbIBEH TY/lC b/|RTb  # noqa: E402
 from msngr_lib import CheckMachine  # noqa: E402
-
-from checklib import *
 
 context.log_level = 'critical'  # bIbIbIbIbIbIbIbIbIbIbI
 
