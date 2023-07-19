@@ -4,7 +4,7 @@ import os
 import sys
 from string import ascii_letters, digits
 from random import choice
-from checklib import *  # noqa: E403
+from checklib import *  # noqa: F403
 from Crypto.Util.number import getPrime
 
 argv = [c for c in sys.argv]  # https://docs.pwntools.com/en/stable/args.html :)))))))))))
