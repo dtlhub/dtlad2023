@@ -1,0 +1,13 @@
+version: '2.4'
+
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    cpus: 2.0
+    mem_limit: 800M 
+    pids_limit: 256
+    volumes:
+      - ./users.db:/app/users.db
+    ports:
+      - "5001:5001"
