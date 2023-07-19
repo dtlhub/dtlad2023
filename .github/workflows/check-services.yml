@@ -38,7 +38,6 @@ jobs:
         - example
         - Zapiski
         - msngr
-
     steps:
     - uses: actions/checkout@v2
 
