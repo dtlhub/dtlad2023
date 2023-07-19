@@ -13,6 +13,7 @@ services:
     depends_on:
       - web
       - pocketbase
+      - cleaner
 
   web:
     container_name: web
