@@ -10,7 +10,7 @@
 | [jeopardy](services/jeopardy/)                 | Python              | ???                                                                   | [???](???)                              |
 | [msngr](services/msngr/)                       | Python              | ???                                                                   | [???](???)                              |
 | [schizichs](services/schizichs/)               | Go                  | ???                                                                   | [???](???)                              |
-| [Zapiski](services/Zapizki/)                   | C                   | ???                                                                   | [???](???)                              |
+| [Zapiski](services/Zapiski/)                   | C                   | ???                                                                   | [???](???)                              |
 
 ## Infrastructure
 
