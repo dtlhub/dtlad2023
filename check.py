@@ -29,16 +29,17 @@ HOST = os.getenv('HOST', default='127.0.0.1')
 OUT_LOCK = Lock()
 DISABLE_LOG = False
 
+
 DC_REQUIRED_OPTIONS = ['services']
 DC_ALLOWED_OPTIONS = DC_REQUIRED_OPTIONS + ['volumes', 'version']
 
 CONTAINER_REQUIRED_OPTIONS = ['restart']
 CONTAINER_ALLOWED_OPTIONS = CONTAINER_REQUIRED_OPTIONS + [
-    'pids_limit', 'mem_limit', 'cpus',
     'build', 'image',
     'ports', 'volumes',
     'environment', 'env_file',
     'depends_on',
+
     'sysctls', 'privileged', 'security_opt',
     'healthcheck', 'expose', 'container_name'
 ]
@@ -302,7 +303,7 @@ class StructureValidator(BaseValidator):
             for opt in DC_REQUIRED_OPTIONS:
                 if self._error(opt in dc, f'required option {opt} not in {path}'):
                     return
-
+                  
             for opt in dc:
                 self._error(
                     opt in DC_ALLOWED_OPTIONS,

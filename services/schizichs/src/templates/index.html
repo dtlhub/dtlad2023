@@ -1,0 +1,20 @@
+<!--index.html-->
+
+{{ template "header.html" .}}
+
+<h1> Добро пожаловать в сервис по загрузке лабораторных работ</h1>
+{{ if ne .Authorized true }}
+     <h3> Авторизируйтесь, чтобы сдать показания</h2>
+{{ end }}
+
+<h2>Лучшие работы за сегодня</h2>
+
+{{ range .publicResults }}
+    <div class="col-4 col-sm-4 col-md-3 col-xl-2 center">
+        <p>Название: {{.LabName}} </p>
+        <p>Теоретическое значение: {{.Expected}} </p>
+        <p>Погрешность {{.Error}}</p>
+    </div>
+{{end}}
+
+{{ template "footer.html" .}}

@@ -1,0 +1,22 @@
+<!-- menu.html -->
+<nav class="navbar navbar-default">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">
+                    Home
+        </a>
+      <ul class="nav navbar-nav">      
+        {{if (eq .Authorized true) }}
+            <li><a href="/user/logout">Logout</a></li>
+            <li><a href="/labs/show">Show labs</a></li>
+            <li><a href="/labs/new">Add new lab</a></li>
+        {{ else }}
+            <li><a href="/user/register">Register</a></li>
+            <li><a href="/user/login">Login</a></li>
+        {{ end}}
+      </ul>
+
+      </div>
+    </div>
+  </nav>
+  
