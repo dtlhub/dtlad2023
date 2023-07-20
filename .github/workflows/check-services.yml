@@ -37,6 +37,10 @@ jobs:
         service:
         - example
         - schizichs 
+        - amogus_plus_plus
+        - jeopardy
+        - Zapiski
+        - msngr
 
     steps:
     - uses: actions/checkout@v2

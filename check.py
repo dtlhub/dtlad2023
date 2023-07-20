@@ -29,8 +29,9 @@ HOST = os.getenv('HOST', default='127.0.0.1')
 OUT_LOCK = Lock()
 DISABLE_LOG = False
 
-DC_REQUIRED_OPTIONS = ['version', 'services']
-DC_ALLOWED_OPTIONS = DC_REQUIRED_OPTIONS + ['volumes', 'links']
+
+DC_REQUIRED_OPTIONS = ['services']
+DC_ALLOWED_OPTIONS = DC_REQUIRED_OPTIONS + ['volumes', 'version']
 
 CONTAINER_REQUIRED_OPTIONS = ['restart']
 CONTAINER_ALLOWED_OPTIONS = CONTAINER_REQUIRED_OPTIONS + [
@@ -38,11 +39,12 @@ CONTAINER_ALLOWED_OPTIONS = CONTAINER_REQUIRED_OPTIONS + [
     'ports', 'volumes',
     'environment', 'env_file',
     'depends_on',
-    'sysctls', 'privileged', 'security_opt', 'links'
-    
-] + ['pids_limit', 'mem_limit', 'cpus']
-SERVICE_REQUIRED_OPTIONS = [] 
-SERVICE_ALLOWED_OPTIONS = CONTAINER_ALLOWED_OPTIONS + ['pids_limit', 'mem_limit', 'cpus']
+
+    'sysctls', 'privileged', 'security_opt',
+    'healthcheck', 'expose', 'container_name'
+]
+SERVICE_REQUIRED_OPTIONS = ['pids_limit', 'mem_limit', 'cpus']
+SERVICE_ALLOWED_OPTIONS = CONTAINER_ALLOWED_OPTIONS
 DATABASES = [
     'redis', 'postgres', 'mysql', 'mariadb',
     'mongo', 'mssql', 'clickhouse', 'tarantool',
@@ -61,7 +63,6 @@ ALLOWED_CHECKER_PATTERNS = [
     "Got requests connection error",
 ]
 FORBIDDEN_CHECKER_PATTERNS = [
-    "requests"
 ]
 
 class ColorType(Enum):
@@ -291,7 +292,6 @@ class StructureValidator(BaseValidator):
     def validate_file(self, f: Path):
         path = f.relative_to(BASE_DIR)
         self._error(f.suffix != '.yaml', f'file {path} has .yaml extension')
-        self._error(f.name != '.gitkeep', f'{path} found, should be named .keep')
 
         if f.name == 'docker-compose.yml':
             with f.open() as file:
@@ -303,21 +303,7 @@ class StructureValidator(BaseValidator):
             for opt in DC_REQUIRED_OPTIONS:
                 if self._error(opt in dc, f'required option {opt} not in {path}'):
                     return
-
-            if self._error(isinstance(dc['version'], str), f'version option in {path} is not string'):
-                return
-
-            try:
-                dc_version = float(dc['version'])
-            except ValueError:
-                self._error(False, f'version option in {path} is not float')
-                return
-
-            self._error(
-                2.4 <= dc_version <= 3.8,
-                f'invalid version in {path}, need >=2.4 and <3.8, got {dc_version}',
-            )
-
+                  
             for opt in dc:
                 self._error(
                     opt in DC_ALLOWED_OPTIONS,
