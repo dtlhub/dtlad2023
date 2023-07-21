@@ -27,8 +27,8 @@ class Checker(BaseChecker):
 
         comment = rnd_string(20)
         lab_name = rnd_string(15)
-        expected_result = rnd_float(1, 300)
-        test_result = rnd_float(10000003000, 999999999999999)
+        expected_result = rnd_float(100, 99999)
+        test_result = expected_result
 
         self.mch.register(session, username, password)
         self.mch.login(session, username, password, Status.MUMBLE)
@@ -52,8 +52,8 @@ class Checker(BaseChecker):
 
         lab_name_public = lab_name_full[:5]
 
-        expected_result = rnd_float(1, 300)
-        test_result = rnd_float(10000003000, 999999999999999)
+        expected_result = rnd_float(100, 99999)
+        test_result = expected_result
 
         self.mch.register(session, username, password)
         self.mch.login(session, username, password, Status.MUMBLE)
