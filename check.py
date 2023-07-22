@@ -35,11 +35,11 @@ DC_ALLOWED_OPTIONS = DC_REQUIRED_OPTIONS + ['volumes', 'version']
 
 CONTAINER_REQUIRED_OPTIONS = ['restart']
 CONTAINER_ALLOWED_OPTIONS = CONTAINER_REQUIRED_OPTIONS + [
+    'pids_limit', 'mem_limit', 'cpus',
     'build', 'image',
     'ports', 'volumes',
     'environment', 'env_file',
     'depends_on',
-
     'sysctls', 'privileged', 'security_opt',
     'healthcheck', 'expose', 'container_name',
     'links',
