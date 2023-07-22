@@ -7,7 +7,7 @@ from schizics_lib import *
 
 
 class Checker(BaseChecker):
-    vulns: int = 3
+    vulns: int = 2
     timeout: int = 5
     uses_attack_data: bool = True
 
