@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-
-	"github.com/gin-gonic/gin"
+	"github.com/YellowPhil/pwnAD/controllers"
+    "github.com/gin-gonic/gin"
 )
 
 type userData struct {
@@ -128,12 +128,19 @@ func AddLab(c *gin.Context) {
 	id, _ := c.Cookie("userID")
 	userID, _ := strconv.Atoi(id)
 
-	if err := labController.AddNewLabResult(uint(userID), newLabData.ExpectedResult, newLabData.TestResult, newLabData.LabName, newLabData.Comment); err != nil {
+	err := labController.AddNewLabResult(uint(userID), newLabData.ExpectedResult, newLabData.TestResult, newLabData.LabName, newLabData.Comment)
+	switch err.(type) {
+	case *controllers.InvalidDataError:
+		c.HTML(http.StatusBadRequest, "input-lab.html", gin.H{
+			"ErrorTitle":   "Пересчитывай!",
+			"ErrorMessage": "Погрешность в лабораторной слишком велика",
+		})
+	case *controllers.LabExistsError:
 		c.HTML(http.StatusBadRequest, "input-lab.html", gin.H{
 			"ErrorTitle":   "Не списывать!",
-			"ErrorMessage": "Теоретические данные слишком похожи на практику или лабораторная с таким названием уже есть",
+			"ErrorMessage": "Такая лабораторная уже есть",
 		})
-		return
+	default:
+		c.Redirect(http.StatusMovedPermanently, "/labs/show")
 	}
-	c.Redirect(http.StatusMovedPermanently, "/labs/show")
 }
