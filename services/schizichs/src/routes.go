@@ -5,9 +5,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-
 	"github.com/YellowPhil/pwnAD/controllers"
-	"github.com/gin-gonic/gin"
+in-gonic/gin"
 )
 
 type userData struct {

@@ -25,21 +25,6 @@ creds = {
 def register():
     session.post(f"{url}/user/register", data=creds)
 
-#
-# def postLab(lab_name: str, test_res: float = None, exp_res: float = None, comment: str = ""):
-#     if test_res is None:
-#         test_res = random.uniform(100000000, 99999999999)
-#     if exp_res is None:
-#         exp_res = random.uniform(0, 123)
-#     lab_data = {
-#         'labName': lab_name,
-#         'testResult': test_res,
-#         'expectedResult': exp_res,
-#         'comment': comment
-#     }
-#     session.post(f"{url}/lab/new", data=lab_data)
-#
-
 
 # Here you should parse attack data
 def parse_labs():
@@ -64,18 +49,15 @@ def solveForLab(lab_data: dict):
     print(session.post(f"{url}/labs/new", data=new_lab_data).text)
 
 
+
 register()
 lab_array = parse_labs()
 
 for i in range(len(lab_array)):
-    if 'capturing' in lab_array[i]['labName']:
-        continue
     solveForLab(lab_array[i])
 print('Creds')
 print(creds)
 
 labs = session.get(f"{url}/labs/show", headers={'Accept':'application/json'}).json()
 for i in labs['payload']:
-    if i['comment'] == 'nigger':
-        continue
     print(i)

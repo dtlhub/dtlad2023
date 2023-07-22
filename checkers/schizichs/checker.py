@@ -51,10 +51,8 @@ class Checker(BaseChecker):
             lab_name_full += "_3"
 
         lab_name_public = lab_name_full[:5]
-
         expected_result = rnd_float(100, 99999)
         test_result = expected_result
-
         self.mch.register(session, username, password)
         self.mch.login(session, username, password, Status.MUMBLE)
         self.mch.add_lab(session, test_result, expected_result, lab_name_full, flag)

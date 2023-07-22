@@ -14,6 +14,7 @@ const studentsCoefficient = 100
 const eps = 0.001
 const searchEps = 0.01
 
+
 type PublicResults struct {
 	Error    float64 `json:"eps"`
 	Expected float64 `json:"expected"`
