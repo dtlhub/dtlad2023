@@ -1,6 +1,6 @@
 # dtlad2023
 
-[Scoreboard leaders](/screenshots/top.png)
+![Scoreboard leaders](/screenshots/top.png)
 
 ## Services
 
