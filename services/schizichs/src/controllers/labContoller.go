@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"errors"
 	"math"
 
 	"gorm.io/gorm"
@@ -9,7 +8,12 @@ import (
 
 const measurements = 10
 const studentsCoefficient = 100
-const eps = 0.1
+
+// GORM очень плохо округляет числа с плавающей запятой, поэтому значения берутся в малом корридоре погрешности (eps)
+// https://stackoverflow.com/a/2188204/15078906
+const eps = 0.001
+const searchEps = 0.01
+
 
 type PublicResults struct {
 	Error    float64 `json:"eps"`
@@ -52,14 +56,16 @@ func newLabResult(expected, testResult float64, labName, comment string) *LabRes
 
 func (lc *LabResultsController) GetLabs() []LabResult {
 	var publicResults []LabResult
-    lc.db.Find(&publicResults)
-	return publicResults 
+	lc.db.Find(&publicResults)
+	return publicResults
 }
 
 func (lc *LabResultsController) GetLabByNameAndID(labName string, id uint) ([]LabResult, bool) {
 	var results []LabResult
 	user := &User{}
 	lc.db.First(&user, id)
+
+	// без погрешности, т.к. поиск по имени
 	if err := lc.db.Debug().Model(&LabResult{}).Where("user_id = ? AND lab_name = ?", id, labName).Find(&results).Error; err != nil {
 		return results, false
 	}
@@ -73,23 +79,31 @@ func (lc *LabResultsController) GetUserLabs(id uint) []LabResult {
 		result []LabResult
 	)
 	lc.db.First(&user, id)
-	lc.db.Model(user).Association("Labs").Find(&result)
+	lc.db.Model(user).Association("Labs").Find(&tmp)
 
-	// return all labs that are withing the small Error range
 	for _, res := range tmp {
-		lc.db.Debug().Model(&LabResult{}).Where("expected = ? AND error <= ?", res.Expected, eps).Find(&tmp)
-		result = append(result, tmp...)
+		var found []LabResult
+		// поиск в коридоре подгрешности с достаточной точностью. См начало файла
+		lc.db.Debug().Model(&LabResult{}).Where("error < ? AND abs(expected - ? ) < error", eps, res.Expected).Find(&found)
+		result = append(result, found...)
 	}
 	return result
 }
 
 func (lc *LabResultsController) AddNewLabResult(userID uint, expectedResult, testResult float64, labName, comment string) error {
 	var user User
+	var labResult LabResult
 
-	if math.Abs(expectedResult-testResult) < 100000 {
-		return errors.New("Student is cheating)")
+	// поиск в коридоре подгрешности. См начало файла
+	// проверка с большим eps для избежания повторений. См начало файла
+	if err := lc.db.Where("abs(expected - ?) <= ?  AND abs( test_result - ?) <= ?", expectedResult, searchEps, testResult, searchEps).First(&labResult).Error; err == nil {
+		return &LabExistsError{}
 	}
+
 	newLab := newLabResult(expectedResult, testResult, labName, comment)
+	if newLab.Error > 0.5 {
+		return &InvalidDataError{}
+	}
 	lc.db.First(&user, userID)
 	return lc.db.Model(&user).Association("Labs").Append(newLab)
 }

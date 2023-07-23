@@ -29,6 +29,7 @@ def reverse_get_pass(username : str):
 
 ADDR = (sys.argv[1], 5712)
 hint = sys.argv[2].split(':')
+print(hint[0])
 password = reverse_get_pass(hint[0])
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect(ADDR)
