@@ -28,17 +28,18 @@ def register():
 
 # Here you should parse attack data
 def parse_labs():
-    return session.get(url, headers={'Accept': 'application/json'}).json()['publicResults']
+    pass
 
 
 def solveForLab(lab_data: dict):
-    n = 100000
+    n = 1000
     x = 0
     percision = 0.001
     exp_res = lab_data['expected']
-    while x < exp_res + 1000000 or calculate_error(x, exp_res) >= percision:
+    while x < exp_res + 10000 or calculate_error(x, exp_res) >= percision:
         res = solve(lab_data['expected'], percision, n)
         n += 1
+        # Взять среднее по отрезку
         x = res[1][0] + (res[0][1] - res[0][0]) / 2
     new_lab_data = {
         'labName': 'capturing ' + lab_data['labName'],

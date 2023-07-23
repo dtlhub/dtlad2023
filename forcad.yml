@@ -1,0 +1,50 @@
+game:
+  default_score: 2500
+  flag_lifetime: 5
+  game_hardness: 10.0
+  inflation: true
+  mode: classic
+  round_time: 60
+  start_time: "2023-07-23T15:00:00"
+  timezone: Europe/Moscow
+
+tasks:
+  - checker: jeopardy/checker.py
+    checker_timeout: 15
+    checker_type: gevent_pfr
+    gets: 1
+    name: jeopardy
+    places: 1
+    puts: 1
+
+  - checker: msngr/checker.py
+    checker_timeout: 20
+    checker_type: gevent_pfr
+    gets: 1
+    name: msngr
+    places: 1
+    puts: 1
+
+  - checker: Zapiski/checker.py
+    checker_timeout: 5
+    checker_type: gevent_pfr
+    gets: 1
+    name: Zapiski
+    places: 1
+    puts: 1
+
+  - checker: amogus_plus_plus/checker.py
+    checker_timeout: 20
+    checker_type: gevent_pfr
+    gets: 1
+    name: amogus_plus_plus
+    places: 3
+    puts: 1
+
+  - checker: schizichs/checker.py
+    checker_timeout: 5
+    checker_type: gevent_pfr
+    gets: 1
+    name: schizichs
+    places: 3
+    puts: 1
