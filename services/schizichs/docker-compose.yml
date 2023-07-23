@@ -15,7 +15,7 @@ services:
     cpus: 0.5
 
   db:
-    image: mysql
+    image: mysql:latest
     restart: unless-stopped
     env_file: .env
     volumes:

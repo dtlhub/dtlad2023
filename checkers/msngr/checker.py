@@ -30,7 +30,7 @@ def get_random_secret_string(length: int = 15) -> str:
 
 class Checker(BaseChecker):
     vulns: int = 1
-    timeout: int = 30
+    timeout: int = 20
     uses_attack_data: bool = True
 
     def __init__(self, *args, **kwargs):
@@ -96,9 +96,6 @@ class Checker(BaseChecker):
         decrypted_hello_hex = self.mch.decrypt(r, ciphertext, key)
         decrypted_hello = bytes.fromhex(decrypted_hello_hex)
         self.assert_eq(decrypted_hello, hello_message.encode(), "Decrypt(encrypt(hello)) != hello")
-
-        # TODO: check commuticate_ask_to_encrypt
-        # TODO: check communicate_ask_for_secret
 
     def check(self):
         self.check_auth()
