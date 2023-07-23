@@ -1,5 +1,6 @@
 # dtlad2023
 
+[Scoreboard leaders](/screenshots/top.png)
 
 ## Services
 
