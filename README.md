@@ -5,7 +5,7 @@
 
 | Service                                        | Language            | Vulns                                                                     | Authors                                 |
 | ---------------------------------------------- | ------------------- | ------------------------------------------------------------------------- | --------------------------------------- |
-| [amogus_plus_plus](services/amogus_plus_plus/) | JavaScript & Svelte | Default creds, missconfiguration, path traversal, prototype pollution     | [@LeKSuS](https://t.me/tarasovion) |
+| [amogus_plus_plus](services/amogus_plus_plus/) | JavaScript & Svelte | Default creds, missconfiguration, path traversal, prototype pollution     | [@LeKSuS](https://t.me/tarasovion)      |
 | [jeopardy](services/jeopardy/)                 | Python              | Default keys, using stream cipher for signing, small nonces for ecdsa     | [@defkit](https://t.me/defkit)          |
 | [msngr](services/msngr/)                       | Python              | Linear sbox in substitution-permutation cipher, dlp with chosen parameters| [@defkit](https://t.me/defkit)          |
 | [schizichs](services/schizichs/)               | Go                  | Default JWT key, Vulnerable math in error function, full lab info leak    | [@synerr](https://t.me/eat_people)      |
