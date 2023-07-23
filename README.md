@@ -1,5 +1,7 @@
 # dtlad2023
 
+[![check-services](https://github.com/dtlhub/dtlad2023/actions/workflows/check-services.yml/badge.svg?branch=master&event=push)](https://github.com/dtlhub/dtlad2023/actions/workflows/check-services.yml)
+
 ![Scoreboard leaders](/screenshots/top.png)
 
 ## Services
