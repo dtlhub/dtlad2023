@@ -12,7 +12,7 @@
 
 Уязвимость формируется из нескольких независимых ошибок:
 
-- [runtime.js](/services/amogus_plus_plus/web/src/lib/server/amogus_plus_plus/runtime.js), добавление новых объектов в `Runtime._storage` происходит с использованием небезопасной реализации функции `merge`. Она позволяет заразить прототип, если передать в функцию `Runtime.addToStorage(value)` `value` вида `{__prototype__: {...}}`
+- [runtime.js](/services/amogus_plus_plus/web/src/lib/server/amogus_plus_plus/runtime.js), добавление новых объектов в `Runtime._storage` происходит с использованием небезопасной реализации функции `merge`. Она позволяет заразить прототип, если передать в функцию `Runtime.addToStorage(value)` `value` вида `{__proto__: {...}}`
 - [statementBases.js](services/amogus_plus_plus/web/src/lib/amogus_plus_plus/statementsBases.js): конвертирование из строки в число происходит не с помощью функции `parseInt`, а с использованием `JSON.parse`, что позволяет парсить не только число, а, в принципе, любой json-serializable объект.
 - [statementBases.js](services/amogus_plus_plus/web/src/lib/amogus_plus_plus/statementsBases.js): регулярное выражение для числа такое же, как и для имен переменных/файлов. Поэтому есть возможность присвоить переменной значение не только числа, но и чего-нибудь другого.
 
